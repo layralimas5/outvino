@@ -24,8 +24,29 @@ identidade/ design guide da marca
 dados/      material bruto do cliente (planilha, fotos)
 ```
 
-Dois projetos Netlify apontando pro mesmo repositório: um com base `site/`,
-outro com base `sistema/`.
+## Deploy
+
+Repositório: <https://github.com/layralimas5/outvino>. **Dois** projetos Netlify
+apontam pro mesmo repositório, cada um com um *base directory* diferente. Sem
+esse ajuste a Netlify olha pra raiz, não acha nada pra publicar e todo caminho
+responde o 404 dela (o genérico, não a página 404 da loja — é assim que se
+reconhece esse erro).
+
+| Projeto | Base directory | Publica | Endereço |
+| --- | --- | --- | --- |
+| Loja | `site` | `dist` | <https://outvino.netlify.app> |
+| Sistema | `sistema` | `painel/dist` | *(ainda não criado)* |
+
+O resto (comando de build, redirects, headers) vem do `netlify.toml` de cada
+pasta — o arquivo manda sobre o que estiver na interface.
+
+⚠️ **Não preencher "package directory" (`package_path`)** junto com o base: a
+Netlify soma os dois e vai procurar em `site/site/`, o build parece passar e o
+deploy sai vazio.
+
+⚠️ O projeto do sistema só deve ser criado **depois** de definir `SENHA_PAINEL`
+nas variáveis de ambiente dele. Sem ela em produção, as rotas de gestão
+respondem 503 de propósito e o painel sobe fechado.
 
 ## Regras do projeto
 
