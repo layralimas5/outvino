@@ -90,7 +90,13 @@ if (!autenticacaoLigada) {
 }
 
 export const env = {
-  ambiente: bruto.NODE_ENV,
+  /**
+   * O ambiente que a API reporta em `/api/saude` e no diagnóstico. Sai de
+   * `producao`, e não do `NODE_ENV` cru: com `AMBIENTE=producao` na Netlify o
+   * `NODE_ENV` fica em `development`, e reportar isso diria o contrário do que
+   * o sistema está de fato fazendo.
+   */
+  ambiente: producao ? ('production' as const) : bruto.NODE_ENV,
   producao,
   porta: bruto.PORT,
   dataDir: resolve(process.cwd(), bruto.DATA_DIR),

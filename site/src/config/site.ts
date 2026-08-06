@@ -69,16 +69,16 @@ export const RODAPE_LINKS = [...NAV_LINKS, { href: '/sobre/', label: 'Sobre nós
 /**
  * Endereço do back-office.
  *
- * O sistema é outro projeto na Netlify, com domínio próprio — por isso ele
- * entra como URL absoluta e não como rota do site. Em desenvolvimento aponta
- * pro Vite do painel; pra apontar pra outro lugar sem editar código, defina
- * `PUBLIC_SISTEMA_URL`.
+ * O sistema é outro projeto na Netlify — por isso entra como URL absoluta e
+ * não como rota do site. Em desenvolvimento aponta pro Vite do painel; pra
+ * apontar pra outro lugar sem editar código, defina `PUBLIC_SISTEMA_URL`.
  *
- * TODO: confirmar o subdomínio final do sistema antes de publicar.
+ * Quando a Outvino tiver domínio próprio, é aqui (ou na variável) que o
+ * endereço muda.
  */
 export const SISTEMA_URL =
   import.meta.env.PUBLIC_SISTEMA_URL ??
-  (import.meta.env.DEV ? 'http://localhost:5175/' : 'https://sistema.outvino.com.br/');
+  (import.meta.env.DEV ? 'http://localhost:5175/' : 'https://outvino-sistema.netlify.app/');
 
 /** Atalhos em ícone, à direita do menu. */
 export const NAV_ACOES = [
