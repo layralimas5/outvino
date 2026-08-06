@@ -3,6 +3,18 @@ import { z } from 'zod';
 
 const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  /**
+   * Marca produção sem passar pelo `NODE_ENV`.
+   *
+   * Existe por causa da Netlify: lá, build e runtime compartilham as mesmas
+   * variáveis (separar por escopo é recurso pago), e `NODE_ENV=production`
+   * durante o build faz o `npm install` pular as devDependencies — sem
+   * TypeScript nem Vite, o build do painel e da API quebra.
+   *
+   * Esta variável não tem esse efeito colateral: só o nosso código a lê.
+   * Em VPS ou Docker continua valendo o `NODE_ENV` de sempre.
+   */
+  AMBIENTE: z.enum(['desenvolvimento', 'producao']).optional(),
   PORT: z.coerce.number().int().positive().default(3333),
   DATA_DIR: z.string().default('./dados'),
   /**
@@ -48,7 +60,9 @@ if (!parsed.success) {
 }
 
 const bruto = parsed.data;
-const producao = bruto.NODE_ENV === 'production';
+
+/** Qualquer um dos dois marca produção; `AMBIENTE` é o caminho da Netlify. */
+const producao = bruto.AMBIENTE === 'producao' || bruto.NODE_ENV === 'production';
 const senhaDoPainel = bruto.SENHA_PAINEL.trim();
 
 if (senhaDoPainel && senhaDoPainel.length < MINIMO_DA_SENHA) {
