@@ -1,0 +1,143 @@
+---
+import PaginaLegal from '../layouts/PaginaLegal.astro';
+import { SITE } from '../config/site';
+
+/**
+ * Termos de uso e de venda (CDC + Decreto 7.962/2013).
+ *
+ * ⚠️ O texto descreve o fluxo real: o site não cobra. O carrinho vira pedido
+ * em rascunho e a compra só existe depois que a loja confirma no WhatsApp.
+ * Quando entrar pagamento online (fase 2), a seção "Como a compra se fecha"
+ * é a primeira a mudar. Região de entrega e prazo não aparecem porque a loja
+ * ainda não fechou esses números: melhor omitir do que prometer errado.
+ */
+const ATUALIZADO_EM = '31/07/2026';
+---
+
+<PaginaLegal
+  title="Termos de uso e venda"
+  description={`As regras da compra na ${SITE.name}: como o pedido se fecha, o que vale como preço, estoque, entrega e cancelamento.`}
+  resumo="Em uma frase: o site monta o pedido, a compra se fecha na conversa. Abaixo, o que isso significa na prática."
+  atualizadoEm={ATUALIZADO_EM}
+>
+  <section>
+    <h2>Ao usar o site, você concorda com isso aqui</h2>
+    <p>
+      Estes termos valem pra navegação no site da {SITE.name} e pra qualquer pedido que sair dele.
+      Se algum ponto não fizer sentido pra você, é melhor falar com a gente antes de comprar.
+    </p>
+  </section>
+
+  <section>
+    <h2>Só vendemos para maiores de 18 anos</h2>
+    <p>
+      A loja vende bebida alcoólica. Vender para menor de 18 anos é crime (art. 243 do Estatuto da
+      Criança e do Adolescente), e a gente não faz isso. Ao fechar um pedido você declara ter 18
+      anos ou mais.
+    </p>
+    <p>
+      Na entrega podemos pedir documento com foto. Sem comprovação de idade, a entrega não é feita e
+      o pedido é cancelado.
+    </p>
+  </section>
+
+  <section>
+    <h2>Como a compra se fecha</h2>
+    <p>
+      O site não cobra nada e não processa pagamento. O fluxo é este:
+    </p>
+    <ul>
+      <li>você monta o carrinho e preenche seus dados;</li>
+      <li>o pedido é registrado no nosso sistema como <strong>rascunho</strong>;</li>
+      <li>o WhatsApp abre com o resumo do pedido pronto pra enviar;</li>
+      <li>
+        a gente confere estoque, confirma o valor final com frete e combina o pagamento com você.
+      </li>
+    </ul>
+    <p>
+      <strong>A compra só existe depois dessa confirmação.</strong> Antes dela, o pedido é uma
+      intenção: não reserva estoque, não gera cobrança e não obriga nenhuma das partes.
+    </p>
+  </section>
+
+  <section>
+    <h2>Preço, estoque e erro de sistema</h2>
+    <p>
+      O preço que aparece no site é o preço do produto, em reais, e vale enquanto estiver publicado.
+      Frete, quando houver, é combinado à parte na conversa e some ao total.
+    </p>
+    <p>
+      A adega é pequena e o estoque do site é atualizado pela loja, não em tempo real. Pode
+      acontecer de um rótulo acabar entre o seu pedido e a nossa confirmação: nesse caso a gente
+      avisa, sugere um substituto e você decide se troca ou cancela sem custo nenhum.
+    </p>
+    <p>
+      Erro evidente de digitação ou de sistema (preço fora da realidade, por exemplo) não obriga a
+      venda. Se acontecer, a gente avisa antes de qualquer cobrança e o pedido é cancelado sem
+      custo.
+    </p>
+  </section>
+
+  <section>
+    <h2>Fotos, descrições e safra</h2>
+    <p>
+      A gente descreve o vinho do jeito que ele é e não publica nota de crítico que não conferimos.
+      A imagem é ilustrativa: rótulo e safra podem variar conforme o lote que estiver na prateleira.
+      Se a safra for decisiva pra você, pergunte antes de fechar.
+    </p>
+  </section>
+
+  <section>
+    <h2>Entrega e retirada</h2>
+    <p>
+      Na hora do pedido você escolhe retirar na loja ou receber em casa. Região atendida, prazo e
+      valor do frete são combinados na conversa, porque dependem de onde você está.
+    </p>
+    <p>
+      A entrega é feita a maior de 18 anos, no endereço que você informou. Endereço incompleto ou
+      ninguém no local pra receber pode gerar nova tentativa combinada com você.
+    </p>
+  </section>
+
+  <section>
+    <h2>Cancelamento e devolução</h2>
+    <p>
+      Antes da nossa confirmação, é só avisar: o rascunho é descartado e acabou. Depois de
+      confirmado, valem as regras de arrependimento e de produto com defeito descritas na página de
+      <a href="/trocas-e-devolucoes/">trocas e devoluções</a>.
+    </p>
+  </section>
+
+  <section>
+    <h2>Cupons</h2>
+    <p>
+      Cupom é pessoal, tem prazo e pode ter valor mínimo de compra. Vale um por pedido, não vira
+      dinheiro e não acumula com outra promoção, salvo se a gente disser o contrário. Cupom usado em
+      pedido cancelado volta a valer enquanto estiver dentro do prazo.
+    </p>
+  </section>
+
+  <section>
+    <h2>Conteúdo do site</h2>
+    <p>
+      Textos, fotos, marca e código do site são nossos ou licenciados pra gente. Dá pra compartilhar
+      link à vontade; copiar o conteúdo pra usar em outra loja, não.
+    </p>
+    <p>
+      A gente cuida pro site ficar no ar e correto, mas pode haver instabilidade e erro de digitação.
+      Achou algo estranho? Avisa que a gente corrige.
+    </p>
+  </section>
+
+  <section>
+    <h2>Mudanças nestes termos</h2>
+    <p>
+      Quando o texto mudar, a data de atualização no topo muda junto. O que vale pro seu pedido é a
+      versão que estava no ar no dia em que você comprou.
+    </p>
+    <p>
+      Consumidor tem foro garantido pelo Código de Defesa do Consumidor: qualquer discussão pode
+      correr na comarca do seu domicílio.
+    </p>
+  </section>
+</PaginaLegal>

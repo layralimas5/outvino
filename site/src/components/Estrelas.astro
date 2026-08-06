@@ -1,0 +1,54 @@
+---
+/**
+ * Cinco estrelas com preenchimento parcial pra média quebrada (4,3 pinta 86%
+ * da quarta). Uma estrela só é desenhada, e o `clip-path` corta — assim não
+ * existe meia-estrela desalinhada nem imagem extra pra baixar.
+ */
+interface Props {
+  nota: number;
+  /** Some da leitura de tela quando o texto ao lado já diz a nota. */
+  rotulo?: string;
+  class?: string;
+  tamanho?: 'pequeno' | 'medio' | 'grande';
+}
+
+const { nota, rotulo, class: classe = '', tamanho = 'medio' } = Astro.props;
+
+const TAMANHOS = { pequeno: 'size-3.5', medio: 'size-4', grande: 'size-5' } as const;
+const preenchimento = Math.max(0, Math.min(100, (nota / 5) * 100));
+const id = `estrelas-${Math.round(preenchimento)}`;
+---
+
+<span
+  class={`inline-flex items-center ${classe}`}
+  role="img"
+  aria-label={rotulo ?? `Nota ${nota.toFixed(1).replace('.', ',')} de 5`}
+>
+  <span class="relative inline-flex" aria-hidden="true">
+    {/* Trilho vazio */}
+    <span class="inline-flex gap-0.5 text-papel-300">
+      {
+        Array.from({ length: 5 }).map(() => (
+          <svg viewBox="0 0 20 20" fill="currentColor" class={TAMANHOS[tamanho]}>
+            <path d="M10 1.6l2.47 5.01 5.53.8-4 3.9.94 5.5L10 14.21l-4.94 2.6.94-5.5-4-3.9 5.53-.8L10 1.6Z" />
+          </svg>
+        ))
+      }
+    </span>
+
+    {/* Camada cheia, cortada na largura da nota */}
+    <span
+      class="absolute inset-0 inline-flex gap-0.5 overflow-hidden text-ouro-500"
+      style={`width: ${preenchimento}%`}
+      data-estrelas={id}
+    >
+      {
+        Array.from({ length: 5 }).map(() => (
+          <svg viewBox="0 0 20 20" fill="currentColor" class={`${TAMANHOS[tamanho]} shrink-0`}>
+            <path d="M10 1.6l2.47 5.01 5.53.8-4 3.9.94 5.5L10 14.21l-4.94 2.6.94-5.5-4-3.9 5.53-.8L10 1.6Z" />
+          </svg>
+        ))
+      }
+    </span>
+  </span>
+</span>

@@ -1,0 +1,653 @@
+{
+  "geradoEm": "2026-08-05T22:30:01.029Z",
+  "produtos": [
+    {
+      "id": "cabernet-sauvignon-piedra-negra",
+      "nome": "Cabernet Sauvignon Piedra Negra",
+      "tipo": "Tinto",
+      "pais": "Chile",
+      "regiao": "Valle del Maipo",
+      "uva": "Cabernet Sauvignon",
+      "vinicola": "Viña Piedra Negra",
+      "safra": 2020,
+      "volumeMl": 750,
+      "teor": "13,5%",
+      "classificacao": "Seco",
+      "amadurecimento": "10 meses em carvalho americano",
+      "temperaturaServico": "17 °C",
+      "potencialGuarda": "6 anos",
+      "visual": "Vermelho rubi intenso, quase opaco",
+      "olfativo": "Cassis, pimentão maduro, eucalipto e chocolate amargo",
+      "gustativo": "Estrutura firme, taninos marcados, corpo médio para encorpado e final persistente",
+      "avaliacoes": {
+        "media": 4,
+        "total": 2,
+        "distribuicao": {
+          "1": 0,
+          "2": 0,
+          "3": 1,
+          "4": 0,
+          "5": 1
+        },
+        "itens": [
+          {
+            "id": "aa2f919f-c2f6-41ac-b89a-f258b31d5b9e",
+            "autor": "Letícia B.",
+            "nota": 3,
+            "titulo": "Bom, mas esperava mais",
+            "comentario": "Não é ruim, só achei um pouco duro pro meu gosto. Quem gosta de tinto mais leve talvez não curta.",
+            "compraVerificada": false,
+            "em": "2026-08-05",
+            "resposta": "Obrigado pela sinceridade, Letícia. Pro seu gosto o Pinot Noir Costa Fria cai bem melhor — chama a gente que a gente te ajuda a escolher."
+          },
+          {
+            "id": "84c18844-6d9f-4dfa-b860-e8b28d88f3f2",
+            "autor": "André C.",
+            "nota": 5,
+            "comentario": "Estrutura firme, do jeito que eu gosto. Pede comida junto, sozinho fica um pouco fechado.",
+            "compraVerificada": false,
+            "em": "2026-08-05"
+          }
+        ]
+      },
+      "preco": 149.9,
+      "descricao": "O clássico do Maipo: cassis, pimentão maduro e um toque de eucalipto. Estrutura firme que pede comida na mesa.",
+      "notas": [
+        "Cassis",
+        "Eucalipto",
+        "Chocolate amargo"
+      ],
+      "harmonizacao": [
+        "Costela",
+        "Massa ao ragu",
+        "Hambúrguer artesanal"
+      ],
+      "destaque": true,
+      "disponivel": true,
+      "poucasUnidades": false,
+      "novidade": true,
+      "imagem": "/produtos/cabernet-sauvignon-piedra-negra-600.webp"
+    },
+    {
+      "id": "chardonnay-barrica-monte-sereno",
+      "nome": "Chardonnay Barrica Monte Sereno",
+      "tipo": "Branco",
+      "pais": "Argentina",
+      "regiao": "Mendoza",
+      "uva": "Chardonnay",
+      "vinicola": "Bodega Monte Sereno",
+      "safra": 2022,
+      "volumeMl": 750,
+      "teor": "13,5%",
+      "classificacao": "Seco",
+      "amadurecimento": "6 meses em barricas de carvalho francês, com bâtonnage",
+      "temperaturaServico": "11 °C",
+      "potencialGuarda": "4 anos",
+      "visual": "Amarelo dourado de boa intensidade",
+      "olfativo": "Pêssego em calda, manteiga, avelã tostada e baunilha",
+      "gustativo": "Untuoso e cremoso, corpo médio para encorpado, acidez presente e final tostado",
+      "preco": 154.9,
+      "descricao": "Seis meses em barrica, sem exagero na madeira. Textura cremosa, fruta amarela madura e final amanteigado.",
+      "notas": [
+        "Pêssego",
+        "Manteiga",
+        "Amêndoa"
+      ],
+      "harmonizacao": [
+        "Frango assado",
+        "Massa com creme",
+        "Queijo brie"
+      ],
+      "destaque": false,
+      "disponivel": true,
+      "poucasUnidades": false,
+      "novidade": true,
+      "imagem": "/produtos/chardonnay-barrica-monte-sereno-600.webp"
+    },
+    {
+      "id": "chianti-classico-poggio-antico",
+      "nome": "Chianti Classico Poggio Antico",
+      "tipo": "Tinto",
+      "pais": "Itália",
+      "regiao": "Toscana",
+      "uva": "Sangiovese",
+      "vinicola": "Tenuta Poggio Antico",
+      "safra": 2019,
+      "volumeMl": 750,
+      "teor": "13,5%",
+      "classificacao": "Seco",
+      "amadurecimento": "12 meses em tonéis de carvalho esloveno",
+      "temperaturaServico": "16 °C",
+      "potencialGuarda": "7 anos",
+      "visual": "Rubi de intensidade média com borda granada",
+      "olfativo": "Cereja ácida, terra molhada, ervas secas e couro",
+      "gustativo": "Acidez alta e viva, taninos firmes, corpo médio e final salgado que pede comida",
+      "preco": 219.9,
+      "descricao": "Sangiovese de manual: cereja ácida, ervas secas e aquela acidez que limpa a boca entre uma garfada e outra.",
+      "notas": [
+        "Cereja",
+        "Tomate seco",
+        "Alecrim"
+      ],
+      "harmonizacao": [
+        "Massa ao sugo",
+        "Pizza",
+        "Antepastos"
+      ],
+      "destaque": false,
+      "disponivel": true,
+      "poucasUnidades": false,
+      "novidade": true,
+      "imagem": "/produtos/chianti-classico-poggio-antico-600.webp"
+    },
+    {
+      "id": "douro-tinto-quinta-do-vale",
+      "nome": "Douro Tinto Quinta do Vale",
+      "tipo": "Tinto",
+      "pais": "Portugal",
+      "regiao": "Douro",
+      "uva": "Touriga Nacional",
+      "vinicola": "Quinta do Vale Escuro",
+      "safra": 2020,
+      "volumeMl": 750,
+      "teor": "14%",
+      "classificacao": "Seco",
+      "amadurecimento": "9 meses em barricas usadas de carvalho francês",
+      "temperaturaServico": "16 °C",
+      "potencialGuarda": "6 anos",
+      "visual": "Rubi escuro com centro concentrado",
+      "olfativo": "Amora, esteva, grafite e um toque mineral do xisto",
+      "gustativo": "Encorpado, taninos de textura fina, boa acidez e final quente",
+      "preco": 179.9,
+      "descricao": "Touriga Nacional em terraço de xisto. Floral no nariz, denso na boca, com mineralidade que segura o conjunto.",
+      "notas": [
+        "Amora",
+        "Violeta",
+        "Grafite"
+      ],
+      "harmonizacao": [
+        "Bacalhau assado",
+        "Carne de porco",
+        "Queijo da serra"
+      ],
+      "destaque": false,
+      "disponivel": true,
+      "poucasUnidades": false,
+      "novidade": true,
+      "imagem": "/produtos/douro-tinto-quinta-do-vale-600.webp"
+    },
+    {
+      "id": "espumante-brut-serra-alta",
+      "nome": "Espumante Brut Serra Alta",
+      "tipo": "Espumante",
+      "pais": "Brasil",
+      "regiao": "Serra Gaúcha",
+      "uva": "Chardonnay, Pinot Noir",
+      "vinicola": "Vinícola Serra Alta",
+      "safra": 2022,
+      "volumeMl": 750,
+      "teor": "12%",
+      "classificacao": "Brut",
+      "amadurecimento": "18 meses sobre borras finas",
+      "temperaturaServico": "7 °C",
+      "potencialGuarda": "3 anos",
+      "visual": "Amarelo palha com perlage fina e persistente",
+      "olfativo": "Maçã verde, pão tostado, castanha e crosta de pão",
+      "gustativo": "Seco e cremoso, acidez firme, borbulha delicada e final tostado",
+      "avaliacoes": {
+        "media": 4.5,
+        "total": 2,
+        "distribuicao": {
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 1,
+          "5": 1
+        },
+        "itens": [
+          {
+            "id": "e1a55bed-0fb1-4820-821c-abd1ac9853d7",
+            "autor": "Marcelo D.",
+            "nota": 4,
+            "comentario": "Cumpre o que promete. Gelado na medida certa fica excelente.",
+            "compraVerificada": false,
+            "em": "2026-08-05"
+          },
+          {
+            "id": "519433b2-632a-48f1-b7d0-210f5d9525fa",
+            "autor": "Juliana P.",
+            "nota": 5,
+            "titulo": "Melhor brut nacional que provei",
+            "comentario": "Borbulha fina, bem seco, aquele gostinho de pão tostado. Serviu de aperitivo e ninguém acreditou no preço.",
+            "compraVerificada": false,
+            "em": "2026-08-05"
+          }
+        ]
+      },
+      "preco": 98.9,
+      "descricao": "Método tradicional, doze meses sobre borras. Perlage fino, maçã verde e pão tostado. Brasileiro que não deve nada pra importado nessa faixa.",
+      "notas": [
+        "Maçã verde",
+        "Pão tostado",
+        "Limão"
+      ],
+      "harmonizacao": [
+        "Aperitivo",
+        "Frituras",
+        "Queijos leves"
+      ],
+      "destaque": true,
+      "disponivel": true,
+      "poucasUnidades": false,
+      "novidade": true,
+      "imagem": "/produtos/espumante-brut-serra-alta-600.webp"
+    },
+    {
+      "id": "kit-descoberta-3-tintos-do-novo-mundo",
+      "nome": "Kit Descoberta: 3 tintos do Novo Mundo",
+      "tipo": "Kit",
+      "pais": "Argentina",
+      "uva": "Malbec, Cabernet, Pinot Noir",
+      "volumeMl": 2250,
+      "preco": 429.9,
+      "precoDe": 504.7,
+      "descricao": "Três garrafas pra comparar estilos numa noite só: um Malbec encorpado, um Cabernet estruturado e um Pinot Noir leve. Vai com uma ficha de degustação impressa.",
+      "notas": [],
+      "harmonizacao": [
+        "Jantar entre amigos",
+        "Presente"
+      ],
+      "destaque": true,
+      "disponivel": true,
+      "poucasUnidades": false,
+      "novidade": true,
+      "imagem": "/produtos/kit-descoberta-3-tintos-do-novo-mundo-600.webp"
+    },
+    {
+      "id": "kit-espumante-tacas",
+      "nome": "Kit Espumante + taças",
+      "tipo": "Kit",
+      "pais": "Brasil",
+      "volumeMl": 750,
+      "preco": 219.9,
+      "descricao": "Um Brut da Serra Gaúcha com duas taças de cristal, na caixa de presente. Pronto pra entregar.",
+      "notas": [],
+      "harmonizacao": [
+        "Presente",
+        "Comemoração"
+      ],
+      "destaque": false,
+      "disponivel": true,
+      "poucasUnidades": false,
+      "novidade": true,
+      "imagem": "/produtos/kit-espumante-tacas-600.webp"
+    },
+    {
+      "id": "malbec-reserva-alta-cumbre",
+      "nome": "Malbec Reserva Alta Cumbre",
+      "tipo": "Tinto",
+      "pais": "Argentina",
+      "regiao": "Valle de Uco, Mendoza",
+      "uva": "Malbec",
+      "vinicola": "Bodega Alta Cumbre",
+      "safra": 2021,
+      "volumeMl": 750,
+      "teor": "14%",
+      "classificacao": "Seco",
+      "amadurecimento": "12 meses em barricas de carvalho francês",
+      "temperaturaServico": "16 °C",
+      "potencialGuarda": "8 anos",
+      "visual": "Rubi profundo com reflexos violáceos",
+      "olfativo": "Ameixa preta madura, baunilha, violeta e um fundo de especiaria doce",
+      "gustativo": "Encorpado e macio, taninos redondos, acidez equilibrada e final longo de fruta preta",
+      "avaliacoes": {
+        "media": 4.7,
+        "total": 3,
+        "distribuicao": {
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 1,
+          "5": 2
+        },
+        "itens": [
+          {
+            "id": "897bc4e6-4bb6-44ff-a1cc-f325e49a0be9",
+            "autor": "Fernanda L.",
+            "nota": 5,
+            "titulo": "Presente certeiro",
+            "comentario": "Levei de presente pro meu pai e ele adorou. A embalagem veio impecável.",
+            "compraVerificada": false,
+            "em": "2026-08-05"
+          },
+          {
+            "id": "5271fe7c-ee39-4417-856d-7c1a586dc321",
+            "autor": "Rodrigo A.",
+            "nota": 4,
+            "comentario": "Muito bom pelo preço. Achei que precisou de uns 20 minutos aberto pra soltar, depois disso ficou ótimo.",
+            "compraVerificada": false,
+            "em": "2026-08-05"
+          },
+          {
+            "id": "f8334161-9533-448e-b629-0f989475c47a",
+            "autor": "Camila R.",
+            "nota": 5,
+            "titulo": "Virou o vinho da casa",
+            "comentario": "Abri num jantar de sexta com costela e sumiu. Bem macio, nada agressivo, e a fruta aparece sem ser doce. Já pedi de novo.",
+            "compraVerificada": false,
+            "em": "2026-08-05",
+            "resposta": "Que bom, Camila! Esse lote de 2021 ficou redondo mesmo. Qualquer coisa chama a gente."
+          }
+        ]
+      },
+      "preco": 189.9,
+      "precoDe": 229.9,
+      "descricao": "Doze meses em carvalho francês numa altitude que segura a acidez. Encorpado, mas sem peso: taninos redondos e um final longo de fruta preta.",
+      "notas": [
+        "Ameixa preta",
+        "Baunilha",
+        "Violeta"
+      ],
+      "harmonizacao": [
+        "Carne vermelha",
+        "Cordeiro",
+        "Queijo curado"
+      ],
+      "destaque": true,
+      "disponivel": true,
+      "poucasUnidades": false,
+      "novidade": true,
+      "imagem": "/produtos/malbec-reserva-alta-cumbre-600.webp"
+    },
+    {
+      "id": "pinot-noir-costa-fria",
+      "nome": "Pinot Noir Costa Fria",
+      "tipo": "Tinto",
+      "pais": "Chile",
+      "regiao": "Valle de Casablanca",
+      "uva": "Pinot Noir",
+      "vinicola": "Viña Costa Fria",
+      "safra": 2022,
+      "volumeMl": 750,
+      "teor": "13%",
+      "classificacao": "Seco",
+      "amadurecimento": "8 meses em carvalho francês de segundo uso",
+      "temperaturaServico": "14 °C",
+      "potencialGuarda": "4 anos",
+      "visual": "Rubi claro e brilhante, pouca densidade",
+      "olfativo": "Framboesa, cereja fresca, cogumelo e leve defumado",
+      "gustativo": "Leve e sedoso, taninos delicados, acidez refrescante e final elegante",
+      "preco": 164.9,
+      "descricao": "Leve, translúcido, de fruta vermelha fresca. Tinto pra quem acha tinto pesado, serve levemente gelado.",
+      "notas": [
+        "Framboesa",
+        "Rosa",
+        "Terra molhada"
+      ],
+      "harmonizacao": [
+        "Salmão",
+        "Cogumelos",
+        "Risoto"
+      ],
+      "destaque": true,
+      "disponivel": true,
+      "poucasUnidades": true,
+      "novidade": true,
+      "imagem": "/produtos/pinot-noir-costa-fria-600.webp"
+    },
+    {
+      "id": "porto-tawny-10-anos-casa-velha",
+      "nome": "Porto Tawny 10 anos Casa Velha",
+      "tipo": "Sobremesa",
+      "pais": "Portugal",
+      "regiao": "Douro",
+      "uva": "Blend tradicional",
+      "vinicola": "Casa Velha",
+      "volumeMl": 750,
+      "teor": "20%",
+      "classificacao": "Doce",
+      "amadurecimento": "10 anos em cascos de carvalho",
+      "temperaturaServico": "14 °C",
+      "potencialGuarda": "10 anos depois de aberto, na geladeira",
+      "visual": "Âmbar acastanhado com borda alaranjada",
+      "olfativo": "Nozes, figo seco, caramelo, laranja cristalizada e canela",
+      "gustativo": "Doce e untuoso, álcool integrado, acidez que segura o açúcar e final muito longo",
+      "preco": 289.9,
+      "descricao": "Dez anos de média em cascos. Cor de âmbar, nozes, caramelo e um final que não acaba. Uma taça pequena resolve a noite.",
+      "notas": [
+        "Nozes",
+        "Caramelo",
+        "Figo seco"
+      ],
+      "harmonizacao": [
+        "Chocolate meio amargo",
+        "Queijo azul",
+        "Sobremesas"
+      ],
+      "destaque": false,
+      "disponivel": true,
+      "poucasUnidades": false,
+      "novidade": true,
+      "imagem": "/produtos/porto-tawny-10-anos-casa-velha-600.webp"
+    },
+    {
+      "id": "prosecco-extra-dry-ca-bianca",
+      "nome": "Prosecco Extra Dry Ca’ Bianca",
+      "tipo": "Espumante",
+      "pais": "Itália",
+      "regiao": "Veneto",
+      "uva": "Glera",
+      "vinicola": "Ca’ Bianca",
+      "volumeMl": 750,
+      "teor": "11%",
+      "classificacao": "Extra Dry",
+      "amadurecimento": "Método Charmat, 60 dias em autoclave",
+      "temperaturaServico": "7 °C",
+      "potencialGuarda": "2 anos",
+      "visual": "Amarelo palha claro com borbulha fina",
+      "olfativo": "Pera, maçã verde, flor de acácia e casca de cítrico",
+      "gustativo": "Levemente adocicado, leve e frutado, acidez refrescante e final curto e limpo",
+      "preco": 139.9,
+      "descricao": "Frutado e levemente açucarado, do jeito que Prosecco tem que ser. Bolha generosa, entra fácil.",
+      "notas": [
+        "Pera",
+        "Flor de acácia",
+        "Maçã"
+      ],
+      "harmonizacao": [
+        "Brunch",
+        "Frutas",
+        "Sobremesas leves"
+      ],
+      "destaque": false,
+      "disponivel": true,
+      "poucasUnidades": false,
+      "novidade": true,
+      "imagem": "/produtos/prosecco-extra-dry-ca-bianca-600.webp"
+    },
+    {
+      "id": "rose-provencal-petit-jardin",
+      "nome": "Rosé Provençal Petit Jardin",
+      "tipo": "Rosé",
+      "pais": "França",
+      "regiao": "Provence",
+      "uva": "Grenache, Cinsault",
+      "vinicola": "Domaine Petit Jardin",
+      "safra": 2023,
+      "volumeMl": 750,
+      "teor": "12,5%",
+      "classificacao": "Seco",
+      "amadurecimento": "Sem passagem por madeira",
+      "temperaturaServico": "10 °C",
+      "potencialGuarda": "2 anos",
+      "visual": "Rosa pálido casca de cebola, muito límpido",
+      "olfativo": "Morango branco, pêssego, tangerina e um toque floral",
+      "gustativo": "Seco e delicado, acidez fresca, corpo leve e final limpo",
+      "preco": 174.9,
+      "precoDe": 199.9,
+      "descricao": "Cor pálida de casca de cebola, o rosé seco que virou padrão de verão. Delicado, cítrico e mineral.",
+      "notas": [
+        "Morango branco",
+        "Toranja",
+        "Erva-doce"
+      ],
+      "harmonizacao": [
+        "Salada niçoise",
+        "Peixe grelhado",
+        "Queijo de cabra"
+      ],
+      "destaque": true,
+      "disponivel": true,
+      "poucasUnidades": false,
+      "novidade": true,
+      "imagem": "/produtos/rose-provencal-petit-jardin-600.webp"
+    },
+    {
+      "id": "sauvignon-blanc-bahia-clara",
+      "nome": "Sauvignon Blanc Bahía Clara",
+      "tipo": "Branco",
+      "pais": "Chile",
+      "regiao": "Valle de Leyda",
+      "uva": "Sauvignon Blanc",
+      "vinicola": "Viña Bahía Clara",
+      "safra": 2023,
+      "volumeMl": 750,
+      "teor": "12,5%",
+      "classificacao": "Seco",
+      "amadurecimento": "Sem passagem por madeira",
+      "temperaturaServico": "9 °C",
+      "potencialGuarda": "2 anos",
+      "visual": "Amarelo palha com reflexos esverdeados",
+      "olfativo": "Maracujá, limão siciliano, capim-limão e um fundo herbáceo",
+      "gustativo": "Acidez cortante, corpo leve, muito refrescante e final cítrico",
+      "avaliacoes": {
+        "media": 4,
+        "total": 1,
+        "distribuicao": {
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 1,
+          "5": 0
+        },
+        "itens": [
+          {
+            "id": "fb40d534-2d01-45ba-bcae-80619a42b0b1",
+            "autor": "Patrícia N.",
+            "nota": 4,
+            "titulo": "Refrescante de verdade",
+            "comentario": "Bebi num almoço de domingo com peixe grelhado. Bem cítrico e leve, desce fácil demais no calor.",
+            "compraVerificada": false,
+            "em": "2026-08-05"
+          }
+        ]
+      },
+      "preco": 119.9,
+      "descricao": "Vinhedo a poucos quilômetros do mar. Acidez cortante, cítrico e herbáceo, com um fundo salino que dá vontade de repetir a taça.",
+      "notas": [
+        "Limão siciliano",
+        "Maracujá",
+        "Capim-limão"
+      ],
+      "harmonizacao": [
+        "Ostras",
+        "Ceviche",
+        "Salada de folhas"
+      ],
+      "destaque": true,
+      "disponivel": true,
+      "poucasUnidades": false,
+      "novidade": true,
+      "imagem": "/produtos/sauvignon-blanc-bahia-clara-600.webp"
+    },
+    {
+      "id": "vinho-verde-alvarinho-da-foz",
+      "nome": "Vinho Verde Alvarinho da Foz",
+      "tipo": "Branco",
+      "pais": "Portugal",
+      "regiao": "Minho",
+      "uva": "Alvarinho",
+      "vinicola": "Adega da Foz",
+      "safra": 2023,
+      "volumeMl": 750,
+      "teor": "12%",
+      "classificacao": "Seco",
+      "amadurecimento": "Sem passagem por madeira",
+      "temperaturaServico": "8 °C",
+      "potencialGuarda": "3 anos",
+      "visual": "Amarelo citrino pálido com leve agulha",
+      "olfativo": "Pêssego branco, flor de laranjeira e casca de limão",
+      "gustativo": "Seco e vibrante, acidez alta, corpo leve e final salino",
+      "preco": 129.9,
+      "descricao": "Levemente pétillant, seco e muito fresco. O branco de dia quente, servido bem gelado.",
+      "notas": [
+        "Lima",
+        "Pera",
+        "Flor branca"
+      ],
+      "harmonizacao": [
+        "Frutos do mar",
+        "Petiscos fritos",
+        "Sushi"
+      ],
+      "destaque": false,
+      "disponivel": true,
+      "poucasUnidades": false,
+      "novidade": true,
+      "imagem": "/produtos/vinho-verde-alvarinho-da-foz-600.webp"
+    }
+  ],
+  "banners": [
+    {
+      "id": "3871e622-cb75-4141-bd59-fa40dbe909a4",
+      "titulo": "Vinho bom não precisa de ocasião",
+      "subtitulo": "Curadoria de rótulos de 6 países, escolhidos garrafa por garrafa. Escolhe no site, fecha no WhatsApp.",
+      "eyebrow": "Seleção da semana",
+      "ctaTexto": "Ver a seleção",
+      "ctaLink": "/vinhos/"
+    },
+    {
+      "id": "d0180426-d1a0-41d6-a413-20938f832b6e",
+      "titulo": "Malbec Reserva com 17% off",
+      "subtitulo": "Alta Cumbre 2021, do Valle de Uco. Enquanto durar o lote.",
+      "eyebrow": "Promoção",
+      "ctaTexto": "Quero esse",
+      "ctaLink": "/vinhos/malbec-reserva-alta-cumbre/"
+    }
+  ],
+  "secoes": [
+    {
+      "id": "f9b61db3-ca3a-4e14-84e1-d54ad24c3331",
+      "titulo": "Escolhidos a dedo",
+      "subtitulo": "O que a gente serviria numa mesa própria.",
+      "produtos": [
+        "cabernet-sauvignon-piedra-negra",
+        "espumante-brut-serra-alta",
+        "kit-descoberta-3-tintos-do-novo-mundo",
+        "malbec-reserva-alta-cumbre",
+        "pinot-noir-costa-fria",
+        "rose-provencal-petit-jardin",
+        "sauvignon-blanc-bahia-clara"
+      ]
+    },
+    {
+      "id": "ae60bd2b-52d6-4c91-b10b-749af2216846",
+      "titulo": "Em promoção",
+      "subtitulo": "Preço menor enquanto o lote durar.",
+      "produtos": [
+        "kit-descoberta-3-tintos-do-novo-mundo",
+        "malbec-reserva-alta-cumbre",
+        "rose-provencal-petit-jardin"
+      ]
+    },
+    {
+      "id": "fb3cbd19-5d61-4086-8931-42c7d26e9c8c",
+      "titulo": "Brancos e rosés pra dia quente",
+      "produtos": [
+        "chardonnay-barrica-monte-sereno",
+        "sauvignon-blanc-bahia-clara",
+        "vinho-verde-alvarinho-da-foz"
+      ]
+    }
+  ]
+}

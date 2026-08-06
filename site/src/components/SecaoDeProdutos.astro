@@ -1,0 +1,37 @@
+---
+import type { Produto } from '../lib/catalogo';
+import ProductCard from './ProductCard.astro';
+
+interface Props {
+  titulo: string;
+  subtitulo?: string;
+  produtos: Produto[];
+  verTudo?: string;
+}
+
+const { titulo, subtitulo, produtos, verTudo } = Astro.props;
+---
+
+<section class="revelar mx-auto max-w-6xl px-4 py-14 sm:px-6">
+  <div class="flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <h2 class="font-display text-3xl sm:text-4xl">{titulo}</h2>
+      {subtitulo && <p class="mt-1.5 text-tinta-500">{subtitulo}</p>}
+    </div>
+
+    {
+      verTudo && (
+        <a
+          href={verTudo}
+          class="border-b border-vinho-600/30 pb-0.5 text-sm text-vinho-600 transition-colors hover:border-vinho-600"
+        >
+          Ver todos
+        </a>
+      )
+    }
+  </div>
+
+  <div class="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+    {produtos.map((produto) => <ProductCard produto={produto} />)}
+  </div>
+</section>

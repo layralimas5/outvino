@@ -1,0 +1,145 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/montserrat';
+import '@fontsource-variable/playfair-display';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CartDrawer from '../components/react/CartDrawer';
+import PortaoDeIdade from '../components/PortaoDeIdade.astro';
+import { SITE } from '../config/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** JSON-LD extra da página (produto, breadcrumb). */
+  schema?: Record<string, unknown>;
+  /** Caminho da imagem de compartilhamento. Cai na arte padrão quando ausente. */
+  imagem?: string;
+  noindex?: boolean;
+  /**
+   * Página que abre com banner escuro de sangria total. O header passa a
+   * flutuar por cima dele, sem cor, e só ganha fundo desfocado no scroll.
+   */
+  headerSobreposto?: boolean;
+}
+
+const {
+  title,
+  description = SITE.description,
+  schema,
+  imagem = '/og.png',
+  noindex,
+  headerSobreposto = false,
+} = Astro.props;
+
+const base = Astro.site ?? SITE.url;
+const canonical = new URL(Astro.url.pathname, base).href;
+const tituloCompleto = title === SITE.name ? title : `${title} · ${SITE.name}`;
+const imagemSocial = new URL(imagem, base).href;
+
+const negocio = {
+  '@context': 'https://schema.org',
+  '@type': 'Store',
+  name: SITE.name,
+  description: SITE.description,
+  url: SITE.url,
+  telephone: `+${SITE.whatsapp}`,
+  openingHours: SITE.openingHours,
+  sameAs: [SITE.instagram],
+};
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{tituloCompleto}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={tituloCompleto} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:image" content={imagemSocial} />
+    <meta property="og:image:alt" content={`${SITE.name}: ${SITE.shortDescription}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={imagemSocial} />
+
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(negocio)} />
+    {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />}
+
+    <script is:inline>
+      /**
+       * Decide o portão de idade antes da primeira pintura: sem isso, a página
+       * aparece por um instante para quem ainda não confirmou a maioridade.
+       * Fica inline e sem `defer` de propósito.
+       */
+      try {
+        document.documentElement.dataset.portao = localStorage.getItem('outvino:maior18:v1')
+          ? 'aberto'
+          : 'fechado';
+      } catch {
+        document.documentElement.dataset.portao = 'fechado';
+      }
+    </script>
+  </head>
+
+  <body class="flex min-h-screen flex-col">
+    <a
+      href="#conteudo"
+      class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-3 focus:rounded-lg focus:bg-tinta-900 focus:px-4 focus:py-2 focus:text-sm focus:text-creme-100"
+    >
+      Pular para o conteúdo
+    </a>
+
+    <Header sobreposto={headerSobreposto} />
+
+    <main id="conteudo" class="flex-1">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <CartDrawer client:idle />
+
+    <PortaoDeIdade />
+
+    <script>
+      /**
+       * Entrada suave das seções. Sem JS (ou com movimento reduzido) tudo
+       * continua visível, porque a classe `.revelar` só esconde dentro do media
+       * query de `prefers-reduced-motion: no-preference`.
+       */
+      const alvos = document.querySelectorAll('.revelar');
+
+      if (alvos.length > 0 && 'IntersectionObserver' in window) {
+        const observador = new IntersectionObserver(
+          (entradas) => {
+            for (const entrada of entradas) {
+              if (!entrada.isIntersecting) continue;
+              entrada.target.classList.add('visivel');
+              observador.unobserve(entrada.target);
+            }
+          },
+          { rootMargin: '0px 0px -10% 0px' },
+        );
+
+        alvos.forEach((alvo) => observador.observe(alvo));
+      } else {
+        alvos.forEach((alvo) => alvo.classList.add('visivel'));
+      }
+    </script>
+  </body>
+</html>

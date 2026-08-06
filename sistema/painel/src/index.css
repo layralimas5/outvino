@@ -1,0 +1,39 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+
+  /* Acento da marca, usado com parcimônia: ação primária e estado ativo. */
+  --color-vinho-50: #fdf2f4;
+  --color-vinho-100: #fbe3e7;
+  --color-vinho-500: #b3273f;
+  --color-vinho-600: #8e1b31;
+  --color-vinho-700: #741527;
+  /* Os escuros da barra lateral. São os mesmos do site (banner e rodapé), pra
+     quem sai da loja e entra no sistema reconhecer a mesma marca. */
+  --color-vinho-800: #5c1220;
+  --color-vinho-900: #3d0a14;
+  --color-vinho-950: #2b040c;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-stone-100);
+    color: var(--color-stone-900);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'tnum';
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-vinho-600);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  /* Número em tabela alinha melhor com largura fixa. */
+  td,
+  th {
+    font-variant-numeric: tabular-nums;
+  }
+}

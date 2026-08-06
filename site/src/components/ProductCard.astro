@@ -1,0 +1,136 @@
+---
+import type { Produto } from '../lib/catalogo';
+import { produtoUrl } from '../lib/catalogo';
+import { percentualDeDesconto, preco, volume } from '../lib/format';
+import AdicionarAoCarrinho from './react/AdicionarAoCarrinho';
+import Estrelas from './Estrelas.astro';
+import FotoDoProduto from './FotoDoProduto.astro';
+
+interface Props {
+  produto: Produto;
+}
+
+const { produto } = Astro.props;
+const url = produtoUrl(produto);
+const emPromocao = produto.precoDe !== undefined && produto.precoDe > produto.preco;
+---
+
+<article
+  class="group flex flex-col overflow-hidden rounded-2xl border border-papel-200 bg-papel-0 shadow-[0_1px_2px_rgba(23,17,20,0.04)] transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-papel-300 hover:shadow-[0_12px_28px_-12px_rgba(23,17,20,0.18)]"
+>
+  {/* Padding menor no celular: a grade é de dois cartões, e cada um tem ~160px. */}
+  <a href={url} class="relative block p-3 sm:p-4" tabindex="-1" aria-hidden="true">
+    {/* `z-10` porque a foto do rótulo também é posicionada e vem depois: sem
+        isso, o fundo branco dela cobriria as etiquetas. */}
+    <div class="absolute top-3 left-3 z-10 flex flex-col items-start gap-1.5">
+      {
+        emPromocao && (
+          <span class="rounded-full bg-vinho-600 px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-creme-100 uppercase">
+            −{percentualDeDesconto(produto.precoDe!, produto.preco)}%
+          </span>
+        )
+      }
+      {
+        produto.novidade && !emPromocao && (
+          <span class="rounded-full border border-ouro-500 px-2.5 py-0.5 text-[11px] tracking-wide text-ouro-700 uppercase">
+            novo
+          </span>
+        )
+      }
+      {
+        !produto.disponivel && (
+          <span class="rounded-full bg-papel-100 px-2.5 py-0.5 text-[11px] tracking-wide text-tinta-500 uppercase">
+            esgotado
+          </span>
+        )
+      }
+    </div>
+
+    {/* Dois cartões por linha no celular, quatro no desktop: a foto nunca passa
+        de metade da tela estreita nem de um quarto da larga. */}
+    <FotoDoProduto
+      produto={produto}
+      sizes="(min-width: 64rem) 15rem, 45vw"
+      class="transition-transform duration-300 group-hover:scale-[1.03]"
+    />
+  </a>
+
+  <div class="flex flex-1 flex-col p-3 pt-0 sm:p-4 sm:pt-0">
+    <p class="text-[11px] tracking-[0.14em] text-tinta-500 uppercase">
+      {produto.tipo} · {produto.pais}
+    </p>
+
+    <h3 class="titulo mt-1.5 font-produto text-base font-semibold">
+      <a href={url} class="transition-colors hover:text-vinho-600"> {produto.nome} </a>
+    </h3>
+
+    <p class="mt-1 text-xs text-tinta-500">
+      {[produto.uva, produto.safra, volume(produto.volumeMl)].filter(Boolean).join(' · ')}
+    </p>
+
+    {/* Só quem tem avaliação publicada mostra estrela. Sem nota, nada aqui. */}
+    {
+      produto.avaliacoes && (
+        <a
+          href={`${url}#avaliacoes`}
+          class="mt-2 inline-flex items-center gap-1.5 transition-opacity hover:opacity-70"
+        >
+          <Estrelas nota={produto.avaliacoes.media} tamanho="pequeno" />
+          <span class="text-xs text-tinta-500">({produto.avaliacoes.total})</span>
+        </a>
+      )
+    }
+
+    <div class="mt-auto flex items-end justify-between gap-3 pt-4">
+      <div>
+        {
+          emPromocao && (
+            <p class="text-xs text-tinta-500 line-through">{preco(produto.precoDe!)}</p>
+          )
+        }
+        <p class="font-produto text-xl font-semibold text-vinho-600">{preco(produto.preco)}</p>
+      </div>
+
+      {
+        produto.poucasUnidades && produto.disponivel && (
+          <p class="text-[11px] text-vinho-600">últimas unidades</p>
+        )
+      }
+    </div>
+
+    <div class="mt-4">
+      <AdicionarAoCarrinho
+        client:visible
+        produto={{
+          id: produto.id,
+          nome: produto.nome,
+          preco: produto.preco,
+          volumeMl: produto.volumeMl,
+          url,
+        }}
+        disponivel={produto.disponivel}
+        compacto
+      />
+    </div>
+  </div>
+</article>
+
+<style>
+  /**
+   * Alinhamento entre cartões vizinhos.
+   *
+   * A grade já estica todos à mesma altura, então quem desalinhava era o miolo:
+   * preço e botão vinham logo depois do nome, e um rótulo de duas linhas jogava
+   * o "Adicionar" alguns pixels abaixo do vizinho de uma linha. Com o `auto` na
+   * margem, o rodapé do cartão gruda embaixo e a fileira inteira fica na mesma
+   * linha, seja qual for o tamanho do nome.
+   *
+   * As duas linhas reservadas no título fazem o mesmo pela metade de cima, sem
+   * cortar nome nenhum: o nome maior que isso continua aparecendo inteiro e
+   * estica o cartão (e, por tabela, os vizinhos).
+   */
+  .titulo {
+    line-height: 1.375;
+    min-height: calc(2 * 1.375em);
+  }
+</style>

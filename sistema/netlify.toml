@@ -1,0 +1,44 @@
+# Deploy do SISTEMA (back-office) na Netlify.
+#
+# Esse arquivo é lido por um projeto Netlify que tem `sistema` como base
+# directory. O site público é outro projeto Netlify, com base `site`, apontando
+# pro mesmo repositório.
+#
+# Aqui o painel é o conteúdo estático e a API inteira vira uma função.
+
+[build]
+  # `npm install` e não `npm ci`: o ci apaga node_modules antes de instalar, e
+  # no Windows isso trava em EPERM quando o OneDrive está com o esbuild.exe
+  # aberto — o que quebra o `netlify deploy --build` local.
+  command = "npm install --prefix api --no-audit --no-fund && npm run build --prefix api && npm install --prefix painel --no-audit --no-fund && npm run build --prefix painel"
+  publish = "painel/dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions]
+  node_bundler = "esbuild"
+
+# /api/* é roteado pela própria função (`export const config = { path }` em
+# netlify/functions/api.mts), então não há redirect pra isso aqui.
+
+# Fallback da SPA: /pedidos aberto direto na barra de endereço tem que carregar
+# o painel, não dar 404. Fica por último, senão engoliria /api.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # O sistema é interno: não pode aparecer em busca de jeito nenhum.
+    X-Robots-Tag = "noindex, nofollow"

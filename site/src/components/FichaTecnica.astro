@@ -1,0 +1,80 @@
+---
+import IconeFicha, { type NomeDaFicha } from './IconeFicha.astro';
+import type { Produto } from '../lib/catalogo';
+import { volume } from '../lib/format';
+
+interface Props {
+  produto: Produto;
+}
+
+const { produto } = Astro.props;
+
+/**
+ * A ordem é a que alguém lê numa contra-rótulo: primeiro o que o vinho é,
+ * depois de onde vem, depois como servir.
+ */
+const linhas: Array<{ icone: NomeDaFicha; rotulo: string; valor?: string | null }> = [
+  { icone: 'uva', rotulo: 'Uva', valor: produto.uva },
+  { icone: 'classificacao', rotulo: 'Classificação', valor: produto.classificacao },
+  { icone: 'safra', rotulo: 'Safra', valor: produto.safra?.toString() },
+  { icone: 'pais', rotulo: 'País', valor: produto.pais },
+  { icone: 'regiao', rotulo: 'Região', valor: produto.regiao },
+  { icone: 'vinicola', rotulo: 'Vinícola', valor: produto.vinicola },
+  { icone: 'amadurecimento', rotulo: 'Amadurecimento', valor: produto.amadurecimento },
+  { icone: 'teor', rotulo: 'Teor alcoólico', valor: produto.teor },
+  { icone: 'volume', rotulo: 'Volume', valor: volume(produto.volumeMl) },
+  { icone: 'temperatura', rotulo: 'Temperatura de serviço', valor: produto.temperaturaServico },
+  { icone: 'guarda', rotulo: 'Potencial de guarda', valor: produto.potencialGuarda },
+];
+
+/** Campo em branco some. Ficha com "—" em metade das linhas não informa nada. */
+const ficha = linhas.filter(
+  (linha): linha is { icone: NomeDaFicha; rotulo: string; valor: string } => Boolean(linha.valor),
+);
+
+const sensorial = [
+  { rotulo: 'Visual', texto: produto.visual },
+  { rotulo: 'Olfativo', texto: produto.olfativo },
+  { rotulo: 'Gustativo', texto: produto.gustativo },
+].filter((item): item is { rotulo: string; texto: string } => Boolean(item.texto));
+---
+
+{
+  (ficha.length > 0 || sensorial.length > 0) && (
+    <section class="mt-10 border-t border-papel-100 pt-8">
+      <h2 class="font-display text-2xl">Ficha técnica</h2>
+
+      <div class="mt-6 grid gap-x-10 gap-y-8 lg:grid-cols-[1.35fr_1fr]">
+        {ficha.length > 0 && (
+          <dl class="grid gap-x-8 gap-y-5 sm:grid-cols-2">
+            {ficha.map((linha) => (
+              <div class="flex items-start gap-3">
+                <IconeFicha
+                  nome={linha.icone}
+                  class="mt-0.5 size-6 shrink-0 text-vinho-600/70"
+                />
+                <div class="min-w-0">
+                  <dt class="text-xs tracking-wide text-tinta-500">{linha.rotulo}</dt>
+                  <dd class="mt-0.5 text-[15px] leading-snug text-tinta-900">{linha.valor}</dd>
+                </div>
+              </div>
+            ))}
+          </dl>
+        )}
+
+        {sensorial.length > 0 && (
+          <div class="lg:border-l lg:border-papel-100 lg:pl-10">
+            <dl class="space-y-5">
+              {sensorial.map((item) => (
+                <div class="border-b border-papel-100 pb-5 last:border-0 last:pb-0">
+                  <dt class="text-xs tracking-wide text-tinta-500">{item.rotulo}</dt>
+                  <dd class="mt-1 text-[15px] leading-relaxed text-tinta-700">{item.texto}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}

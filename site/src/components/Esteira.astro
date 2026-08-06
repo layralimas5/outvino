@@ -1,0 +1,103 @@
+---
+/**
+ * Faixa de recados da loja rolando pra esquerda, sem parar.
+ *
+ * O movimento é CSS puro: quatro cópias idênticas da lista num trilho de
+ * largura `max-content`, andando até -50%, ou seja, exatamente duas cópias.
+ * Quando o trilho volta ao zero, a terceira cópia está no lugar da primeira e
+ * o corte não aparece.
+ *
+ * São quatro e não duas porque o loop só é invisível enquanto o trecho
+ * percorrido for mais largo que a tela. Duas cópias bastam num celular e
+ * abrem um vão num monitor grande.
+ *
+ * As cópias extras são `aria-hidden`: quem usa leitor de tela ouve a lista uma
+ * vez só. Sob `prefers-reduced-motion` a animação para e a faixa vira uma
+ * lista rolável na mão.
+ */
+interface Props {
+  itens: readonly string[];
+}
+
+const { itens } = Astro.props;
+---
+
+<section class="esteira border-b border-vinho-900 bg-vinho-800" aria-label="A Outvino em resumo">
+  <div class="esteira-trilho">
+    {
+      [false, true, true, true].map((copia) => (
+        <ul class="esteira-lista" aria-hidden={copia ? 'true' : undefined}>
+          {itens.map((item) => (
+            <li class="esteira-item">
+              <span aria-hidden="true" class="esteira-ponto" />
+              {item}
+            </li>
+          ))}
+        </ul>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .esteira {
+    overflow: hidden;
+  }
+
+  .esteira-trilho {
+    display: flex;
+    width: max-content;
+  }
+
+  .esteira-lista {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+  }
+
+  .esteira-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.9rem 1.5rem;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    color: var(--color-creme-300);
+  }
+
+  .esteira-ponto {
+    display: block;
+    width: 0.3rem;
+    height: 0.3rem;
+    flex-shrink: 0;
+    border-radius: 9999px;
+    background-color: var(--color-ouro-400);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .esteira-trilho {
+      animation: esteira-anda 42s linear infinite;
+    }
+
+    /* Parar no hover deixa quem estiver lendo terminar a frase. */
+    .esteira:hover .esteira-trilho,
+    .esteira:focus-within .esteira-trilho {
+      animation-play-state: paused;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .esteira {
+      overflow-x: auto;
+    }
+  }
+
+  @keyframes esteira-anda {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+</style>

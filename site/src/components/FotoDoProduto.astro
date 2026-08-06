@@ -1,0 +1,50 @@
+---
+import type { Produto } from '../lib/catalogo';
+import { fontesDaFoto } from '../lib/fotos';
+import Garrafa from './Garrafa.astro';
+
+/**
+ * Foto do rótulo dentro de uma caixa quadrada.
+ *
+ * O quadrado é o que mantém a vitrine alinhada: `npm run produtos` já entrega
+ * toda foto recortada e reencaixada com a mesma margem, então basta desenhar a
+ * mesma caixa em todo lugar para garrafa alta, garrafa baixa e caixa de kit
+ * ocuparem exatamente o mesmo espaço no cartão.
+ *
+ * Sem foto, entra a ilustração de garrafa — que já muda de cor conforme o tipo
+ * do vinho e ocupa a mesma caixa.
+ */
+interface Props {
+  produto: Produto;
+  /** `sizes` do `srcset`: quanto da largura da tela a foto ocupa de fato. */
+  sizes: string;
+  /** Foto acima da dobra (página do rótulo): sai do lazy e ganha prioridade. */
+  prioritaria?: boolean;
+  class?: string;
+}
+
+const { produto, sizes, prioritaria = false, class: classe } = Astro.props;
+
+const fontes = produto.imagem ? fontesDaFoto(produto.imagem) : null;
+---
+
+<div class:list={['relative aspect-square', classe]}>
+  {
+    produto.imagem ? (
+      <img
+        src={fontes?.padrao ?? produto.imagem}
+        srcset={fontes?.srcset}
+        sizes={fontes ? sizes : undefined}
+        alt={`Garrafa de ${produto.nome}`}
+        width="600"
+        height="600"
+        loading={prioritaria ? 'eager' : 'lazy'}
+        fetchpriority={prioritaria ? 'high' : undefined}
+        decoding="async"
+        class="size-full object-contain"
+      />
+    ) : (
+      <Garrafa tipo={produto.tipo} class="size-full py-2" />
+    )
+  }
+</div>

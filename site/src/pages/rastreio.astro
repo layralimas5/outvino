@@ -1,0 +1,132 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CapaDePagina from '../components/CapaDePagina.astro';
+import { CAMPO } from '../lib/ui';
+import { SITE } from '../config/site';
+import { linkDeContato } from '../lib/whatsapp';
+
+/**
+ * Rastreio de pedido.
+ *
+ * ⚠️ Placeholder consciente: a API ainda não expõe consulta pública de pedido
+ * (`sistema/api/src/infra/http/rotas/publico.ts` só tem catálogo, cupom e
+ * criação). O formulário está montado e validado no cliente, mas em vez de
+ * consultar ele monta a pergunta pronta pro WhatsApp, assim a pessoa sai daqui
+ * com resposta, não com erro. Quando a rota existir, é só trocar o `submit`.
+ */
+const ETAPAS = [
+  { titulo: 'Recebido', texto: 'O pedido chegou pra gente e está na fila de conferência.' },
+  { titulo: 'Confirmado', texto: 'Estoque conferido e pagamento combinado no WhatsApp.' },
+  { titulo: 'A caminho', texto: 'Saiu pra entrega ou já está separado pra retirada na loja.' },
+];
+---
+
+<BaseLayout
+  title="Rastrear pedido"
+  description={`Acompanhe o andamento do seu pedido na ${SITE.name}.`}
+  noindex
+  headerSobreposto
+>
+  <CapaDePagina>
+    <nav aria-label="Trilha de navegação" class="text-xs text-creme-300/80">
+      <a href="/" class="transition-colors hover:text-ouro-400">Início</a>
+      <span aria-hidden="true" class="mx-1.5">/</span>
+      <span class="text-creme-100">Rastrear pedido</span>
+    </nav>
+
+    <h1 class="mt-4 font-display text-4xl leading-[1.1] sm:text-5xl">Onde está meu pedido</h1>
+
+    <p class="mt-5 max-w-2xl text-lg leading-relaxed text-creme-300">
+      Informa o número que a gente te passou no WhatsApp e o telefone do pedido.
+    </p>
+  </CapaDePagina>
+
+  <section class="mx-auto max-w-3xl px-4 py-14 sm:px-6">
+    <form id="rastreio" class="rounded-2xl border border-papel-200 bg-papel-0 p-6 sm:p-8">
+      <div class="grid gap-4 sm:grid-cols-2">
+        <label class="block">
+          <span class="mb-1.5 block text-xs tracking-wide text-tinta-500 uppercase">
+            Número do pedido
+          </span>
+          <input
+            required
+            id="numero"
+            name="numero"
+            inputmode="numeric"
+            placeholder="1042"
+            autocomplete="off"
+            class={CAMPO}
+          />
+        </label>
+
+        <label class="block">
+          <span class="mb-1.5 block text-xs tracking-wide text-tinta-500 uppercase">
+            WhatsApp do pedido
+          </span>
+          <input
+            required
+            id="telefone"
+            name="telefone"
+            inputmode="tel"
+            minlength="10"
+            placeholder="(27) 99999-9999"
+            autocomplete="tel"
+            class={CAMPO}
+          />
+        </label>
+      </div>
+
+      <button
+        type="submit"
+        class="mt-6 w-full rounded-lg bg-vinho-600 px-6 py-3 font-medium text-creme-100 transition-colors hover:bg-vinho-700 sm:w-auto"
+      >
+        Consultar
+      </button>
+
+      <p class="mt-4 text-xs text-tinta-500">
+        A consulta abre a conversa no WhatsApp com o número do pedido preenchido. A gente responde na
+        hora, no horário da loja.
+      </p>
+    </form>
+
+    <ol class="mt-12 grid gap-5 sm:grid-cols-3">
+      {
+        ETAPAS.map((etapa, indice) => (
+          <li class="rounded-2xl border border-papel-200 bg-papel-0 p-5">
+            <span class="font-display text-2xl text-vinho-600">{indice + 1}</span>
+            <h2 class="mt-1 font-display text-lg">{etapa.titulo}</h2>
+            <p class="mt-1.5 text-sm leading-relaxed">{etapa.texto}</p>
+          </li>
+        ))
+      }
+    </ol>
+
+    <p class="mt-10 text-center text-sm">
+      Não achou o número?
+      <a
+        href={linkDeContato('Oi! Quero acompanhar meu pedido mas não achei o número.')}
+        target="_blank"
+        rel="noreferrer"
+        class="text-vinho-600 underline underline-offset-4"
+      >
+        Chama a gente no WhatsApp.
+      </a>
+    </p>
+  </section>
+</BaseLayout>
+
+<script>
+  import { linkDeContato } from '../lib/whatsapp';
+
+  const form = document.getElementById('rastreio') as HTMLFormElement | null;
+  const numero = document.getElementById('numero') as HTMLInputElement | null;
+  const telefone = document.getElementById('telefone') as HTMLInputElement | null;
+
+  form?.addEventListener('submit', (evento) => {
+    evento.preventDefault();
+    if (!form.reportValidity() || !numero || !telefone) return;
+
+    const mensagem = `Oi! Queria saber do meu pedido *#${numero.value.trim()}*. Telefone do pedido: ${telefone.value.trim()}.`;
+    window.open(linkDeContato(mensagem), '_blank', 'noopener');
+  });
+</script>

@@ -1,0 +1,95 @@
+---
+/**
+ * Ícones de interface em SVG inline: sem requisição, herdam `currentColor` e
+ * escalam com a fonte. Traço de 1.6 pra combinar com o peso da Inter.
+ */
+/* Numa linha só: o parser do `.astro` não engole união quebrada em linhas. */
+export type NomeDeIcone = 'rastreio' | 'usuario' | 'menu' | 'fechar' | 'filtro' | 'taca' | 'sistema';
+
+interface Props {
+  nome: NomeDeIcone;
+  class?: string;
+}
+
+const { nome, class: classe = 'size-5' } = Astro.props;
+---
+
+<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.6"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  class={classe}
+>
+  {
+    nome === 'rastreio' && (
+      <>
+        <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+        <path d="m3.3 7 8.7 5 8.7-5" />
+        <path d="M12 22V12" />
+        <path d="m7.5 4.3 9 5.2" />
+      </>
+    )
+  }
+
+  {
+    nome === 'usuario' && (
+      <>
+        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </>
+    )
+  }
+
+  {
+    nome === 'menu' && (
+      <>
+        <path d="M4 7h16" />
+        <path d="M4 12h16" />
+        <path d="M4 17h16" />
+      </>
+    )
+  }
+
+  {
+    nome === 'fechar' && (
+      <>
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </>
+    )
+  }
+
+  {
+    nome === 'filtro' && (
+      <>
+        <path d="M4 6h16" />
+        <path d="M7 12h10" />
+        <path d="M10 18h4" />
+      </>
+    )
+  }
+
+  {
+    nome === 'sistema' && (
+      <>
+        <path d="M3 5.5A1.5 1.5 0 0 1 4.5 4h15A1.5 1.5 0 0 1 21 5.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 14.5Z" />
+        <path d="M8 20h8" />
+        <path d="M12 16v4" />
+      </>
+    )
+  }
+
+  {
+    nome === 'taca' && (
+      <>
+        <path d="M8 3h8l-.7 6a3.3 3.3 0 0 1-6.6 0Z" />
+        <path d="M12 12v7" />
+        <path d="M8.5 19h7" />
+      </>
+    )
+  }
+</svg>

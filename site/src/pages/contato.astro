@@ -1,0 +1,129 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CapaDePagina from '../components/CapaDePagina.astro';
+import BlocoVinho from '../components/BlocoVinho.astro';
+import { SITE } from '../config/site';
+import { linkDeContato } from '../lib/whatsapp';
+
+/**
+ * Contato.
+ *
+ * ⚠️ Sem formulário de propósito: não existe backend de e-mail no projeto, e
+ * formulário que não entrega mensagem é pior que não ter. Tudo aqui aponta pro
+ * WhatsApp, que é o canal real da loja. Endereço fica de fora enquanto o
+ * briefing não trouxer o dado.
+ */
+const CANAIS = [
+  {
+    titulo: 'WhatsApp',
+    texto: 'Pedido, dúvida sobre rótulo, indicação. É por aqui que a gente resolve tudo.',
+    acao: 'Abrir conversa',
+    href: linkDeContato('Oi! Vim pelo site da Outvino.'),
+    externo: true,
+  },
+  {
+    titulo: 'Instagram',
+    texto: 'Novidade que chegou, lote que está acabando e o que a gente andou abrindo.',
+    acao: 'Ver o perfil',
+    href: SITE.instagram,
+    externo: true,
+  },
+  {
+    titulo: 'Pedido em andamento',
+    texto: 'Já comprou e quer saber onde está? Consulta pelo número do pedido.',
+    acao: 'Rastrear pedido',
+    href: '/rastreio/',
+    externo: false,
+  },
+];
+---
+
+<BaseLayout
+  title="Contato"
+  description={`Fale com a ${SITE.name}: atendimento por WhatsApp, ${SITE.openingHours.toLowerCase()}.`}
+  headerSobreposto
+>
+  <CapaDePagina>
+    <nav aria-label="Trilha de navegação" class="text-xs text-creme-300/80">
+      <a href="/" class="transition-colors hover:text-ouro-400">Início</a>
+      <span aria-hidden="true" class="mx-1.5">/</span>
+      <span class="text-creme-100">Contato</span>
+    </nav>
+
+    <h1 class="mt-4 font-display text-4xl leading-[1.1] sm:text-5xl">Fala com a gente</h1>
+
+    <p class="mt-5 max-w-2xl text-lg leading-relaxed text-creme-300">
+      Quem responde é quem escolheu os vinhos. Atendimento {SITE.openingHours.toLowerCase()}.
+    </p>
+  </CapaDePagina>
+
+  <section class="revelar mx-auto max-w-6xl px-4 py-14 sm:px-6">
+    <div class="grid gap-5 md:grid-cols-3">
+      {
+        CANAIS.map((canal) => (
+          <article class="canal flex flex-col rounded-2xl border border-papel-200 bg-papel-0 p-6">
+            <h2 class="font-display text-xl">{canal.titulo}</h2>
+            <p class="mt-2 flex-1 text-sm leading-relaxed">{canal.texto}</p>
+            <a
+              href={canal.href}
+              target={canal.externo ? '_blank' : undefined}
+              rel={canal.externo ? 'noreferrer' : undefined}
+              class="mt-5 inline-block self-start border-b border-vinho-600/30 pb-0.5 text-sm text-vinho-600 transition-colors hover:border-vinho-600"
+            >
+              {canal.acao}
+            </a>
+          </article>
+        ))
+      }
+    </div>
+
+    <div class="mt-10">
+      <BlocoVinho>
+        <h2 class="font-display text-2xl">Antes de chamar</h2>
+        <p class="mt-2 max-w-xl text-creme-300">
+          Boa parte das dúvidas de pagamento, entrega e retirada já está respondida na página da
+          adega. Se a sua não estiver lá, é só mandar mensagem.
+        </p>
+        <a
+          href="/adega/"
+          class="mt-6 inline-block rounded-lg bg-creme-100 px-6 py-3 font-medium text-noite-950 transition-colors hover:bg-white"
+        >
+          Ver as perguntas frequentes
+        </a>
+      </BlocoVinho>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /**
+   * Os três canais pulsam de leve ao passar o mouse.
+   *
+   * O mesmo movimento dos passos do "Como funciona" na home: sobe dois pixels,
+   * a borda escurece e a sombra respira em laço. Chama sem saltar, e some
+   * inteiro para quem pediu menos movimento no sistema.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    .canal {
+      transition:
+        border-color 0.2s var(--ease-suave),
+        transform 0.2s var(--ease-suave);
+    }
+
+    .canal:hover {
+      transform: translateY(-2px);
+      border-color: var(--color-papel-300);
+      animation: canal-pulsa 1.8s ease-in-out infinite;
+    }
+  }
+
+  @keyframes canal-pulsa {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgb(142 27 49 / 0.22);
+    }
+    50% {
+      box-shadow: 0 0 0 0.65rem rgb(142 27 49 / 0);
+    }
+  }
+</style>

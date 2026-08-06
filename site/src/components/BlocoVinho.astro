@@ -1,0 +1,72 @@
+---
+import { BANNER_PADRAO } from '../config/site';
+import { fontesDoBanner } from '../lib/banners';
+
+/**
+ * Superfície vinho com a arte do banner desfocada ao fundo.
+ *
+ * Existe pra que a chamada de promoção e o convite do fim da home tenham
+ * exatamente o mesmo fundo: o banner da marca borrado sob um véu vinho, o que
+ * amarra os dois cartões ao topo da página sem repetir a imagem nítida.
+ *
+ * A imagem entra pela variante mais estreita (480px, alguns kilobytes): borrada
+ * desse jeito, resolução nenhuma aparece. Quando o WebP não carrega, sobra o
+ * `bg-vinho-800` chapado e o cartão continua legível.
+ *
+ * A imagem e o véu são `aria-hidden` e ficam atrás do conteúdo dentro de um
+ * `isolate`, então o empilhamento não vaza pro resto da página.
+ */
+interface Props {
+  /** Classe extra do conteúdo, pra alinhar texto ou limitar largura. */
+  class?: string;
+  /** Arte do fundo. Cai na arte da marca quando não vier outra. */
+  fundo?: string;
+}
+
+const { class: classe, fundo = BANNER_PADRAO } = Astro.props;
+
+const imagem = fontesDoBanner(fundo)?.fundo ?? fundo;
+---
+
+<div
+  class="no-escuro relative isolate overflow-hidden rounded-2xl bg-vinho-800 px-6 py-12 sm:px-12"
+>
+  <img src={imagem} alt="" aria-hidden="true" loading="lazy" decoding="async" class="bloco-arte" />
+
+  <div class="bloco-veu" aria-hidden="true"></div>
+
+  <div class:list={['relative', classe]}>
+    <slot />
+  </div>
+</div>
+
+<style>
+  /**
+   * O `scale` compensa o borrão: sem ele o desfoque puxa transparência das
+   * bordas pra dentro e sobra um contorno claro em volta do cartão.
+   */
+  .bloco-arte {
+    position: absolute;
+    inset: 0;
+    z-index: -20;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.15);
+    filter: blur(18px) saturate(1.2);
+  }
+
+  /* Véu de contraste: o texto creme precisa de fundo escuro previsível, e o
+     banner tem áreas claras (a taça, o pano) que passariam por baixo dele. */
+  .bloco-veu {
+    position: absolute;
+    inset: 0;
+    z-index: -10;
+    background: linear-gradient(
+      115deg,
+      rgb(43 4 12 / 0.9) 0%,
+      rgb(43 4 12 / 0.72) 50%,
+      rgb(61 10 20 / 0.4) 100%
+    );
+  }
+</style>

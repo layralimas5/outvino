@@ -1,0 +1,116 @@
+---
+import PaginaLegal from '../layouts/PaginaLegal.astro';
+import { SITE } from '../config/site';
+import { linkDeContato } from '../lib/whatsapp';
+
+/**
+ * Trocas e devoluções (CDC: art. 49 para arrependimento, art. 18 e 26 para
+ * vício do produto).
+ *
+ * ⚠️ Prazo de coleta e quem paga o frete de devolução por arrependimento
+ * seguem a lei (é a loja), mas a logística concreta ainda não foi definida
+ * com a Outvino. Por isso o texto manda combinar no WhatsApp em vez de
+ * cravar transportadora e prazo.
+ */
+const ATUALIZADO_EM = '31/07/2026';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'MerchantReturnPolicy',
+  name: `Política de trocas e devoluções da ${SITE.name}`,
+  merchantReturnDays: 7,
+  returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+  returnFees: 'https://schema.org/FreeReturn',
+  applicableCountry: 'BR',
+};
+---
+
+<PaginaLegal
+  title="Trocas e devoluções"
+  description={`Como devolver ou trocar uma compra da ${SITE.name}: prazo de arrependimento de 7 dias, garrafa com defeito e como pedir o reembolso.`}
+  resumo="Comprou e se arrependeu, ou a garrafa chegou com problema? Os dois casos têm solução. O que muda é o prazo e o que a gente precisa de você."
+  atualizadoEm={ATUALIZADO_EM}
+  schema={schema}
+>
+  <section>
+    <h2>Mudou de ideia: 7 dias</h2>
+    <p>
+      Compra feita fora da loja física tem direito de arrependimento. Você tem <strong>7 dias
+      corridos a partir do recebimento</strong> pra desistir, sem precisar explicar o motivo (art. 49
+      do Código de Defesa do Consumidor).
+    </p>
+    <p>Duas condições, e são as únicas:</p>
+    <ul>
+      <li>a garrafa precisa estar <strong>fechada e lacrada</strong>, sem sinal de uso;</li>
+      <li>o produto volta com embalagem e acessórios que vieram junto.</li>
+    </ul>
+    <p>
+      O frete da devolução por arrependimento é por nossa conta. A gente combina a coleta ou a
+      devolução na loja pelo WhatsApp e devolve o valor pago pelo mesmo meio, assim que a garrafa
+      chegar de volta e a gente conferir.
+    </p>
+    <p>
+      Compra retirada na loja não entra nessa regra: ali você viu o produto antes de levar. Mesmo
+      assim, se der algum problema, fala com a gente.
+    </p>
+  </section>
+
+  <section>
+    <h2>Chegou com problema</h2>
+    <p>
+      Garrafa quebrada, vazando, com lacre rompido ou rótulo diferente do que você pediu: a troca é
+      nossa responsabilidade e não tem discussão. Nesses casos:
+    </p>
+    <ul>
+      <li>não descarte a garrafa nem a embalagem antes de falar com a gente;</li>
+      <li>manda uma foto pelo WhatsApp, que resolve mais rápido que qualquer formulário;</li>
+      <li>
+        a gente troca pelo mesmo rótulo, troca por outro de valor equivalente ou devolve o dinheiro.
+        A escolha é sua.
+      </li>
+    </ul>
+    <p>
+      Para defeito aparente, o prazo legal de reclamação é de 30 dias a partir do recebimento (art.
+      26 do CDC). Avise assim que perceber.
+    </p>
+  </section>
+
+  <section>
+    <h2>Vinho com defeito de conservação</h2>
+    <p>
+      Vinho é produto vivo. Se você abrir e ele estiver oxidado, com cheiro de rolha ou claramente
+      estragado, a gente resolve: troca ou devolve o valor. Mas precisamos da garrafa com o restante
+      do conteúdo pra conferir o que aconteceu.
+    </p>
+    <p>
+      O que <strong>não</strong> é defeito: não ter gostado do vinho. Sabor é pessoal, e uma garrafa
+      aberta porque o estilo não te agradou não gera devolução. Pra evitar isso, use a gente antes de
+      comprar: a gente indica pelo que você gosta de beber, não pelo que precisa sair do estoque.
+    </p>
+  </section>
+
+  <section>
+    <h2>Como pedir</h2>
+    <p>
+      Chama no WhatsApp com o <strong>número do pedido</strong> e uma frase do que aconteceu. Se for
+      problema físico, manda a foto junto. A gente confirma o que fazer no mesmo dia de atendimento e
+      combina a coleta ou a devolução com você.
+    </p>
+    <p>
+      <a href={linkDeContato('Oi! Quero falar sobre uma troca/devolução. Meu pedido é o número…')}
+        target="_blank"
+        rel="noreferrer">
+        Abrir conversa sobre uma devolução
+      </a>
+    </p>
+  </section>
+
+  <section>
+    <h2>Reembolso</h2>
+    <p>
+      Devolvemos pelo mesmo meio em que você pagou, assim que a garrafa voltar e for conferida.
+      Pagamento por Pix ou transferência volta pra mesma conta; combinado direto na conversa, volta
+      do mesmo jeito. Se o pedido teve frete e o problema foi nosso, o frete volta também.
+    </p>
+  </section>
+</PaginaLegal>

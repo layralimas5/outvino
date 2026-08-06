@@ -1,0 +1,21 @@
+{
+  "name": "outvino-sistema",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Back-office da Outvino: raiz de build do projeto Netlify do sistema",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "npm install --prefix api && npm run build --prefix api && npm install --prefix painel && npm run build --prefix painel",
+    "check": "npm run check --prefix api && npm run check --prefix painel"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^10.7.10",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "serverless-http": "^4.0.0",
+    "zod": "^4.4.3"
+  }
+}

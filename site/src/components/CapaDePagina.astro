@@ -1,0 +1,72 @@
+---
+import { BANNER_PADRAO } from '../config/site';
+import { fontesDoBanner } from '../lib/banners';
+
+/**
+ * Capa escura de sangria total, com a arte da marca desfocada ao fundo.
+ *
+ * É o mesmo fundo do `BlocoVinho`, em versão faixa: a página interna abre com
+ * a mesma cor do banner da home, e o cabeçalho pode flutuar por cima sem cor
+ * nenhuma. Quem usa esta capa precisa passar `headerSobreposto` no layout —
+ * senão sobra uma barra branca em cima da arte.
+ *
+ * A imagem entra pela variante de 480px (alguns kilobytes): borrada desse
+ * jeito, resolução nenhuma aparece. Se o WebP não carregar, sobra o
+ * `bg-vinho-800` chapado e o texto continua legível.
+ */
+interface Props {
+  /** Arte do fundo. Cai na arte da marca quando não vier outra. */
+  fundo?: string;
+}
+
+const { fundo = BANNER_PADRAO } = Astro.props;
+
+const arte = fontesDoBanner(fundo)?.fundo ?? fundo;
+---
+
+<section class="no-escuro relative isolate overflow-hidden bg-vinho-800">
+  <img src={arte} alt="" aria-hidden="true" decoding="async" class="capa-arte" />
+  <div class="capa-veu" aria-hidden="true"></div>
+
+  <div class="mx-auto max-w-6xl px-4 pt-28 pb-12 sm:px-6 sm:pt-36 sm:pb-16">
+    <slot />
+  </div>
+</section>
+
+<style>
+  /**
+   * O `scale` compensa o borrão: sem ele o desfoque puxa transparência das
+   * bordas e sobra um contorno claro na emenda com o cabeçalho.
+   */
+  .capa-arte {
+    position: absolute;
+    inset: 0;
+    z-index: -20;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.12);
+    filter: blur(14px) saturate(1.2);
+  }
+
+  /**
+   * Véu de contraste.
+   *
+   * Mais fechado à esquerda, que é onde o texto fica, e aberto à direita, para
+   * a garrafa e a taça da arte ainda aparecerem como mancha de luz. Fechar
+   * tudo por igual devolveria uma faixa vinho chapada, e aí não valeria a pena
+   * carregar imagem nenhuma.
+   */
+  .capa-veu {
+    position: absolute;
+    inset: 0;
+    z-index: -10;
+    background: linear-gradient(
+      110deg,
+      rgb(43 4 12 / 0.88) 0%,
+      rgb(43 4 12 / 0.7) 40%,
+      rgb(43 4 12 / 0.38) 70%,
+      rgb(61 10 20 / 0.16) 100%
+    );
+  }
+</style>

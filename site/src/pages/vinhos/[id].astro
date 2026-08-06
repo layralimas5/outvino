@@ -1,0 +1,264 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SecaoDeProdutos from '../../components/SecaoDeProdutos.astro';
+import Avaliacoes from '../../components/Avaliacoes.astro';
+import Estrelas from '../../components/Estrelas.astro';
+import FichaTecnica from '../../components/FichaTecnica.astro';
+import FotoDoProduto from '../../components/FotoDoProduto.astro';
+import AdicionarAoCarrinho from '../../components/react/AdicionarAoCarrinho';
+import { produtos, produtoUrl, relacionados, type Produto } from '../../lib/catalogo';
+import { nota as formatarNota, percentualDeDesconto, preco, volume } from '../../lib/format';
+import { linkDoProduto } from '../../lib/whatsapp';
+import { SITE } from '../../config/site';
+
+/** Uma página por rótulo publicado, tudo estático, gerado no build. */
+export const getStaticPaths = (() =>
+  produtos.map((produto) => ({
+    params: { id: produto.id },
+    props: { produto },
+  }))) satisfies GetStaticPaths;
+
+interface Props {
+  produto: Produto;
+}
+
+const { produto } = Astro.props;
+
+const url = new URL(produtoUrl(produto), SITE.url).href;
+const emPromocao = produto.precoDe !== undefined && produto.precoDe > produto.preco;
+const sugestoes = relacionados(produto);
+
+const avaliacoes = produto.avaliacoes;
+
+/** Linha de identificação embaixo do nome. Cai fora o que não existir. */
+const identificacao = [produto.vinicola, produto.uva, produto.safra, volume(produto.volumeMl)]
+  .filter(Boolean)
+  .join(' · ');
+
+const descricaoCurta = [produto.tipo, produto.uva, produto.safra, `de ${produto.pais}`]
+  .filter(Boolean)
+  .join(' · ');
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Product',
+      '@id': `${url}#produto`,
+      name: produto.nome,
+      description: produto.descricao,
+      sku: produto.id,
+      url,
+      category: `Vinho ${produto.tipo}`,
+      ...(produto.imagem ? { image: new URL(produto.imagem, SITE.url).href } : {}),
+      ...(produto.vinicola ? { brand: { '@type': 'Brand', name: produto.vinicola } } : {}),
+      /**
+       * Nota estruturada só existe se houver avaliação real e publicada. O
+       * Google pune rich snippet de nota inventada, e com razão.
+       */
+      ...(avaliacoes
+        ? {
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: avaliacoes.media,
+              reviewCount: avaliacoes.total,
+              bestRating: 5,
+              worstRating: 1,
+            },
+            review: avaliacoes.itens.map((avaliacao) => ({
+              '@type': 'Review',
+              author: { '@type': 'Person', name: avaliacao.autor },
+              datePublished: avaliacao.em,
+              reviewBody: avaliacao.comentario,
+              ...(avaliacao.titulo ? { name: avaliacao.titulo } : {}),
+              reviewRating: {
+                '@type': 'Rating',
+                ratingValue: avaliacao.nota,
+                bestRating: 5,
+                worstRating: 1,
+              },
+            })),
+          }
+        : {}),
+      offers: {
+        '@type': 'Offer',
+        url,
+        price: produto.preco.toFixed(2),
+        priceCurrency: 'BRL',
+        itemCondition: 'https://schema.org/NewCondition',
+        availability: produto.disponivel
+          ? 'https://schema.org/InStock'
+          : 'https://schema.org/OutOfStock',
+        seller: { '@type': 'Organization', name: SITE.name },
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Início', item: SITE.url },
+        { '@type': 'ListItem', position: 2, name: 'Vinhos', item: `${SITE.url}/vinhos/` },
+        { '@type': 'ListItem', position: 3, name: produto.nome, item: url },
+      ],
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title={produto.nome}
+  description={`${produto.nome}: ${descricaoCurta}. ${produto.descricao}`.slice(0, 300)}
+  schema={schema}
+  imagem={produto.imagem}
+>
+  <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+    <nav aria-label="Trilha de navegação" class="text-xs text-tinta-500">
+      <a href="/" class="transition-colors hover:text-vinho-600">Início</a>
+      <span aria-hidden="true" class="mx-1.5">/</span>
+      <a href="/vinhos/" class="transition-colors hover:text-vinho-600">Vinhos</a>
+      <span aria-hidden="true" class="mx-1.5">/</span>
+      <span class="text-tinta-700">{produto.nome}</span>
+    </nav>
+
+    <article class="mt-8 grid gap-10 md:grid-cols-2 md:gap-14">
+      {/* Sem tinta de fundo atrás da foto: o recorte do produto é branco, e
+          qualquer gradiente aqui desenharia um quadrado visível em volta dele. */}
+      <div
+        class="flex items-center justify-center rounded-2xl border border-papel-200 bg-papel-0 p-4 sm:p-6"
+      >
+        <FotoDoProduto
+          produto={produto}
+          sizes="(min-width: 48rem) 30rem, 90vw"
+          prioritaria
+          class="w-full"
+        />
+      </div>
+
+      <div>
+        <p class="eyebrow">{produto.tipo} · {produto.pais}</p>
+
+        <h1 class="mt-3 font-produto text-3xl leading-tight font-semibold text-tinta-900 sm:text-4xl">
+          {produto.nome}
+        </h1>
+
+        {identificacao && <p class="mt-2 text-sm text-tinta-500">{identificacao}</p>}
+
+        {
+          avaliacoes && (
+            <a
+              href="#avaliacoes"
+              class="mt-3 inline-flex items-center gap-2 transition-opacity hover:opacity-70"
+            >
+              <Estrelas nota={avaliacoes.media} />
+              <span class="text-sm text-tinta-700">
+                {formatarNota(avaliacoes.media)}
+                <span class="text-tinta-500">
+                  {' '}
+                  ·{' '}
+                  {avaliacoes.total === 1 ? '1 avaliação' : `${avaliacoes.total} avaliações`}
+                </span>
+              </span>
+            </a>
+          )
+        }
+
+        <div class="mt-6 flex flex-wrap items-end gap-3">
+          {
+            emPromocao && (
+              <p class="text-sm text-tinta-500 line-through">{preco(produto.precoDe!)}</p>
+            )
+          }
+          <p class="font-produto text-4xl font-semibold text-vinho-600">{preco(produto.preco)}</p>
+          {
+            emPromocao && (
+              <span class="mb-1.5 rounded-full bg-vinho-600 px-2.5 py-0.5 text-xs font-semibold tracking-wide text-creme-100 uppercase">
+                −{percentualDeDesconto(produto.precoDe!, produto.preco)}%
+              </span>
+            )
+          }
+        </div>
+
+        {
+          produto.poucasUnidades && produto.disponivel && (
+            <p class="mt-2 text-sm text-vinho-600">Últimas unidades desse lote.</p>
+          )
+        }
+
+        <div class="mt-7">
+          <AdicionarAoCarrinho
+            client:load
+            produto={{
+              id: produto.id,
+              nome: produto.nome,
+              preco: produto.preco,
+              volumeMl: produto.volumeMl,
+              url: produtoUrl(produto),
+            }}
+            disponivel={produto.disponivel}
+          />
+        </div>
+
+        <a
+          href={linkDoProduto(produto.nome)}
+          target="_blank"
+          rel="noreferrer"
+          class="mt-3 inline-block text-sm text-tinta-700 underline decoration-papel-300 underline-offset-4 transition-colors hover:text-vinho-600"
+        >
+          {produto.disponivel ? 'Tirar uma dúvida no WhatsApp' : 'Avisa quando chegar'}
+        </a>
+
+        <p class="mt-4 text-xs text-tinta-500">
+          Pagamento e frete combinados no WhatsApp. Retirada na loja ou entrega.
+        </p>
+
+        <p class="mt-8 leading-relaxed text-tinta-700">{produto.descricao}</p>
+
+        {
+          produto.notas.length > 0 && (
+            <section class="mt-8">
+              <h2 class="eyebrow">Na taça</h2>
+              <ul class="mt-3 flex flex-wrap gap-2">
+                {produto.notas.map((nota) => (
+                  <li class="rounded-lg border border-papel-200 bg-papel-50 px-3 py-1.5 text-sm text-tinta-700">
+                    {nota}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        {
+          produto.harmonizacao.length > 0 && (
+            <section class="mt-6">
+              <h2 class="eyebrow">Harmoniza com</h2>
+              <ul class="mt-3 flex flex-wrap gap-2">
+                {produto.harmonizacao.map((prato) => (
+                  <li class="rounded-lg border border-papel-200 px-3 py-1.5 text-sm text-tinta-700">
+                    {prato}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+      </div>
+    </article>
+
+    <FichaTecnica produto={produto} />
+
+    <Avaliacoes produto={produto} />
+  </div>
+
+  {
+    sugestoes.length > 0 && (
+      <SecaoDeProdutos
+        titulo="Na mesma pegada"
+        subtitulo="Mesmo perfil, outro rótulo."
+        produtos={sugestoes}
+        verTudo="/vinhos/"
+      />
+    )
+  }
+</BaseLayout>

@@ -1,0 +1,118 @@
+---
+import PaginaLegal from '../layouts/PaginaLegal.astro';
+import { SITE } from '../config/site';
+
+/**
+ * Política de privacidade (LGPD, Lei 13.709/2018).
+ *
+ * ⚠️ O texto descreve o site como ele é hoje: sem cadastro, sem analytics e
+ * sem cookie de terceiro. O carrinho vive em `localStorage` e o pedido vira
+ * rascunho na API do sistema. Se um dia entrar Google Analytics, pixel ou
+ * login de cliente, essa página muda no mesmo commit.
+ */
+const ATUALIZADO_EM = '31/07/2026';
+---
+
+<PaginaLegal
+  title="Política de privacidade"
+  description={`Como a ${SITE.name} trata seus dados: o que coletamos, por quê, por quanto tempo e como você pede a exclusão.`}
+  resumo="A gente pede o mínimo pra entregar seu vinho e não vende dado de ninguém. Aqui está exatamente o que fica registrado e o que você pode pedir pra apagar."
+  atualizadoEm={ATUALIZADO_EM}
+>
+  <section>
+    <h2>O que essa política cobre</h2>
+    <p>
+      Vale para o site da {SITE.name} e para o atendimento no WhatsApp que sai dele. Quem decide o
+      que é feito com os dados (o controlador, na linguagem da LGPD) é a própria {SITE.name}.
+    </p>
+  </section>
+
+  <section>
+    <h2>Navegar no site não exige cadastro</h2>
+    <p>
+      Não existe login, não existe formulário de cadastro e o site não guarda seu nome, e-mail ou
+      CPF pra você olhar o catálogo. Dá pra percorrer a loja inteira sem nos entregar nada.
+    </p>
+    <p>O que o navegador guarda por conta própria, no seu aparelho:</p>
+    <ul>
+      <li>
+        <strong>Carrinho.</strong> Os itens que você escolheu ficam no armazenamento local do seu
+        navegador, pra cesta não sumir se você fechar a aba. Não é cookie, não sai do seu aparelho
+        e some quando você limpa os dados do site.
+      </li>
+      <li>
+        <strong>Confirmação de idade.</strong> Um registro simples de que você já confirmou ter 18
+        anos ou mais, pra não perguntar de novo a cada visita. Também fica só no seu aparelho.
+      </li>
+    </ul>
+    <p>
+      Não usamos cookie de publicidade, pixel de rede social nem ferramenta de análise de audiência.
+      Se isso mudar, a mudança aparece aqui antes de entrar no ar.
+    </p>
+  </section>
+
+  <section>
+    <h2>Quando você fecha um pedido</h2>
+    <p>
+      No fim do carrinho você preenche o que a gente precisa pra separar e entregar: nome, telefone,
+      e-mail (opcional) e, se for entrega, o endereço. Esses dados formam um pedido em rascunho no
+      nosso sistema e abrem uma conversa no WhatsApp com o resumo já montado.
+    </p>
+    <p>Usamos essas informações para:</p>
+    <ul>
+      <li>separar as garrafas e conferir estoque;</li>
+      <li>combinar pagamento, entrega ou retirada com você;</li>
+      <li>responder dúvidas sobre um pedido que já aconteceu;</li>
+      <li>cumprir obrigação fiscal, quando houver emissão de nota.</li>
+    </ul>
+    <p>
+      A base legal é a execução do contrato de compra e venda (art. 7º, V da LGPD) e, para a parte
+      fiscal, o cumprimento de obrigação legal (art. 7º, II).
+    </p>
+  </section>
+
+  <section>
+    <h2>Com quem esses dados são compartilhados</h2>
+    <p>
+      Só com quem é indispensável pro pedido acontecer: a plataforma de hospedagem do site e do
+      sistema, o WhatsApp (Meta) enquanto a conversa corre por lá e, quando houver entrega, quem
+      leva a encomenda até você. Ninguém recebe dado seu pra fazer publicidade e nada é vendido a
+      terceiros.
+    </p>
+  </section>
+
+  <section>
+    <h2>Por quanto tempo guardamos</h2>
+    <p>
+      O pedido fica no sistema enquanto for útil pro atendimento e pelo prazo que a lei fiscal
+      exigir. Passado isso, apagamos ou anonimizamos. Pedido em rascunho que nunca virou compra é
+      descartado periodicamente.
+    </p>
+  </section>
+
+  <section>
+    <h2>Seus direitos</h2>
+    <p>
+      A LGPD te dá o direito de saber o que temos sobre você, corrigir o que estiver errado, pedir
+      cópia, pedir a exclusão do que não somos obrigados a guardar e revogar consentimento. É só
+      chamar no WhatsApp pedindo, e a gente responde em até 15 dias.
+    </p>
+    <p>
+      Um aviso honesto: dado que a lei fiscal manda manter não pode ser apagado antes do prazo,
+      mesmo a pedido. Nesse caso a gente te diz qual é o prazo em vez de prometer o que não dá.
+    </p>
+  </section>
+
+  <section>
+    <h2>Segurança e menores de 18</h2>
+    <p>
+      O site trafega em HTTPS e o acesso ao sistema de gestão é restrito a quem trabalha na loja.
+      Nenhum sistema é infalível, então guardamos só o necessário: é a melhor proteção que existe.
+    </p>
+    <p>
+      A loja vende bebida alcoólica e não atende menores de 18 anos. Não coletamos dados de menores
+      de propósito. Se identificarmos que um cadastro de pedido é de menor de idade, ele é cancelado
+      e os dados, apagados.
+    </p>
+  </section>
+</PaginaLegal>

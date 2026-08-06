@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CapaDePagina from '../components/CapaDePagina.astro';
+import Simulador from '../components/react/Simulador';
+import { produtos } from '../lib/catalogo';
+import { SITE } from '../config/site';
+import { PERGUNTAS } from '../lib/simulador';
+
+/**
+ * Simulador de vinho: o quiz de um lado, a vitrine se reorganizando do outro.
+ *
+ * É a versão de site da conversa de balcão — para quem não entende de vinho e
+ * para quem entende mas não decide. Nada aqui depende de JavaScript para o
+ * conteúdo existir: a lista de rótulos indicados é a ilha, mas a página traz
+ * texto, links para o catálogo e o caminho do WhatsApp mesmo sem ela.
+ *
+ * As avaliações saem do que é enviado para a ilha: ela não desenha estrela e
+ * cada rótulo carrega os comentários inteiros, que dobrariam o HTML da página
+ * à toa.
+ */
+const paraOSimulador = produtos.map(({ avaliacoes: _avaliacoes, ...produto }) => produto);
+
+const paises = [...new Set(produtos.map((produto) => produto.pais))];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: PERGUNTAS.map((pergunta) => ({
+    '@type': 'Question',
+    name: pergunta.titulo,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: pergunta.opcoes.map((opcao) => opcao.rotulo).join(', '),
+    },
+  })),
+};
+---
+
+<BaseLayout
+  title="Simule seu vinho"
+  description={`Não sabe qual vinho escolher? Responda cinco perguntas sobre ocasião, comida, paladar e orçamento: a ${SITE.name} indica os rótulos da adega que combinam com você.`}
+  schema={schema}
+  headerSobreposto
+>
+  <CapaDePagina>
+    <nav aria-label="Trilha de navegação" class="text-xs text-creme-300/80">
+      <a href="/" class="transition-colors hover:text-ouro-400">Início</a>
+      <span aria-hidden="true" class="mx-1.5">/</span>
+      <span class="text-creme-100">Simule</span>
+    </nav>
+
+    <p class="eyebrow mt-4">Simulador</p>
+
+    <h1 class="mt-3 font-display text-4xl sm:text-5xl">Qual vinho combina com você</h1>
+
+    <p class="mt-4 max-w-2xl leading-relaxed text-creme-300">
+      Cinco perguntas rápidas: a ocasião, o que vai à mesa, como você gosta de beber e quanto quer
+      gastar. A cada resposta, os {produtos.length} rótulos de {paises.length} países da adega se reorganizam
+      ao lado. Não precisa entender nada de vinho, é pra isso que a gente está aqui.
+    </p>
+  </CapaDePagina>
+
+  <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-14">
+    <Simulador client:load produtos={paraOSimulador} />
+  </div>
+</BaseLayout>

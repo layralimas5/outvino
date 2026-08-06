@@ -1,0 +1,126 @@
+---
+import Estrelas from './Estrelas.astro';
+import FormularioDeAvaliacao from './react/FormularioDeAvaliacao';
+import type { Produto } from '../lib/catalogo';
+import { dataLonga, nota as formatarNota } from '../lib/format';
+
+interface Props {
+  produto: Produto;
+}
+
+const { produto } = Astro.props;
+const avaliacoes = produto.avaliacoes;
+
+/**
+ * Sem avaliação publicada o bloco continua aparecendo — mas convidando a
+ * escrever a primeira, nunca fingindo nota. Estrela vazia decorativa engana
+ * o cliente e queima a loja.
+ */
+const notas = [5, 4, 3, 2, 1];
+---
+
+<section id="avaliacoes" class="mt-14 border-t border-papel-100 pt-10">
+  <h2 class="font-display text-2xl sm:text-3xl">
+    {avaliacoes ? 'O que estão dizendo' : 'Avaliações'}
+  </h2>
+
+  {
+    avaliacoes ? (
+      <div class="mt-7 grid gap-10 lg:grid-cols-[minmax(0,18rem)_1fr] lg:gap-14">
+        <div>
+          <div class="flex items-end gap-3">
+            <p class="font-produto text-5xl leading-none font-semibold text-tinta-900">
+              {formatarNota(avaliacoes.media)}
+            </p>
+            <div class="pb-1">
+              <Estrelas nota={avaliacoes.media} tamanho="grande" />
+              <p class="mt-1 text-sm text-tinta-500">
+                {avaliacoes.total}{' '}
+                {avaliacoes.total === 1 ? 'avaliação' : 'avaliações'}
+              </p>
+            </div>
+          </div>
+
+          <ul class="mt-5 space-y-1.5">
+            {notas.map((valor) => {
+              const quantas = avaliacoes.distribuicao[valor] ?? 0;
+              const percentual = avaliacoes.total > 0 ? (quantas / avaliacoes.total) * 100 : 0;
+
+              return (
+                <li class="flex items-center gap-3 text-sm">
+                  <span class="w-10 shrink-0 text-tinta-500">{valor} ★</span>
+                  <span
+                    class="h-1.5 flex-1 overflow-hidden rounded-full bg-papel-200"
+                    role="img"
+                    aria-label={`${quantas} de ${avaliacoes.total} deram ${valor} estrelas`}
+                  >
+                    <span
+                      class="block h-full rounded-full bg-ouro-500"
+                      style={`width: ${percentual}%`}
+                    />
+                  </span>
+                  <span class="w-6 shrink-0 text-right text-tinta-500">{quantas}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        <ul class="space-y-6">
+          {avaliacoes.itens.map((avaliacao) => (
+            <li class="border-b border-papel-100 pb-6 last:border-0 last:pb-0">
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <Estrelas nota={avaliacao.nota} tamanho="pequeno" />
+                <span class="text-sm font-medium text-tinta-900">{avaliacao.autor}</span>
+                {avaliacao.compraVerificada && (
+                  <span class="inline-flex items-center gap-1 rounded-full bg-papel-100 px-2 py-0.5 text-[11px] text-tinta-600">
+                    <svg
+                      viewBox="0 0 20 20"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="size-3"
+                      aria-hidden="true"
+                    >
+                      <path d="m4 10.5 4 4 8-9" />
+                    </svg>
+                    compra verificada
+                  </span>
+                )}
+                <time datetime={avaliacao.em} class="text-xs text-tinta-500">
+                  {dataLonga(avaliacao.em)}
+                </time>
+              </div>
+
+              {avaliacao.titulo && (
+                <p class="mt-2 font-medium text-tinta-900">{avaliacao.titulo}</p>
+              )}
+
+              <p class="mt-1.5 leading-relaxed text-tinta-700">{avaliacao.comentario}</p>
+
+              {avaliacao.resposta && (
+                <div class="mt-3 border-l-2 border-vinho-600/40 pl-4">
+                  <p class="text-xs tracking-wide text-tinta-500">Resposta da Outvino</p>
+                  <p class="mt-1 text-sm leading-relaxed text-tinta-700">{avaliacao.resposta}</p>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ) : (
+      <p class="mt-5 max-w-xl leading-relaxed text-tinta-700">
+        Ninguém avaliou esse rótulo ainda. Se você já bebeu, sua opinião ajuda quem está decidindo
+        agora.
+      </p>
+    )
+  }
+
+  {/* Fora da grade: aberto, o formulário precisa de largura, não de coluna estreita. */}
+  <div class={`max-w-2xl ${avaliacoes ? 'mt-10 border-t border-papel-100 pt-8' : 'mt-6'}`}>
+    {avaliacoes && <p class="mb-4 text-tinta-700">Já bebeu esse? Conta como foi.</p>}
+    <FormularioDeAvaliacao client:visible produtoId={produto.id} produtoNome={produto.nome} />
+  </div>
+</section>

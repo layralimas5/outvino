@@ -1,0 +1,317 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SecaoDeProdutos from '../components/SecaoDeProdutos.astro';
+import BannerPromocao from '../components/BannerPromocao.astro';
+import BlocoVinho from '../components/BlocoVinho.astro';
+import Esteira from '../components/Esteira.astro';
+import { banners, produtos, secoes, type Produto } from '../lib/catalogo';
+import { BANNER_PADRAO, SITE } from '../config/site';
+import { fontesDoBanner } from '../lib/banners';
+import { linkDeContato } from '../lib/whatsapp';
+
+const [principal, ...outros] = banners;
+const secundario = outros[0];
+
+/** Banner cadastrado no painel manda; sem imagem própria, entra a arte da marca. */
+const arteDoBanner = principal?.imagem ?? BANNER_PADRAO;
+const fontesDaArte = fontesDoBanner(arteDoBanner);
+
+const paises = [...new Set(produtos.map((produto) => produto.pais))];
+
+/**
+ * Onde a chamada da promoção entra: logo antes da faixa de promoção.
+ *
+ * A faixa de promoção é a que só tem produto com preço cortado. Não serve
+ * procurar "alguma" oferta: um rótulo em promoção costuma aparecer também
+ * entre os destaques, e a chamada acabaria no topo da home.
+ *
+ * Procurar pelo desconto em vez do título deixa o painel livre pra renomear a
+ * seção sem quebrar a ordem da página.
+ */
+const emPromocao = (produto: Produto) =>
+  produto.precoDe !== undefined && produto.precoDe > produto.preco;
+
+const idDaSecaoDePromocao = secoes.find((secao) => secao.produtos.every(emPromocao))?.id;
+
+/**
+ * Recados da esteira logo abaixo do banner.
+ *
+ * Só entra o que a loja de fato pratica: os dois primeiros saem do catálogo,
+ * o resto está escrito nos termos e na página da adega. Nada de promessa de
+ * prazo ou frete aqui: a Outvino ainda não fechou esses números.
+ */
+const RECADOS = [
+  `${produtos.length} rótulos na prateleira`,
+  `${paises.length} países`,
+  'Curadoria própria: nada entra sem passar pela taça',
+  'Pedido fechado no WhatsApp',
+  'Entrega ou retirada na loja',
+  'Sem cadastro, sem enrolação',
+  'O preço do site é o preço',
+  'Venda proibida para menores de 18 anos',
+];
+
+const COMO_FUNCIONA = [
+  {
+    titulo: 'Escolhe no site',
+    texto: 'Filtra por tipo, país ou preço e monta o carrinho sem cadastro nenhum.',
+  },
+  {
+    titulo: 'Fecha no WhatsApp',
+    texto: 'O pedido chega pra gente pronto. Confirmamos estoque e combinamos o pagamento.',
+  },
+  {
+    titulo: 'Recebe ou retira',
+    texto: 'Entrega na sua casa ou retirada na loja, do jeito que for melhor pra você.',
+  },
+];
+---
+
+<BaseLayout title={SITE.name} description={SITE.description} headerSobreposto>
+  {/* Banner estendido: sangria total, o header flutua por cima sem cor. */}
+  <section class="banner no-escuro relative isolate overflow-hidden bg-vinho-900">
+    <picture class="banner-moldura">
+      {fontesDaArte && <source type="image/webp" srcset={fontesDaArte.srcset} sizes="100vw" />}
+      <img
+        src={arteDoBanner}
+        alt=""
+        aria-hidden="true"
+        fetchpriority="high"
+        decoding="async"
+        class="banner-arte"
+      />
+    </picture>
+
+    <div class="banner-veu" aria-hidden="true"></div>
+
+    <div
+      class="mx-auto grid max-w-6xl items-center gap-10 px-4 pt-32 pb-20 sm:px-6 md:grid-cols-2 md:pt-44 md:pb-28"
+    >
+      <div>
+        <p class="eyebrow">{principal?.eyebrow ?? 'Adega com curadoria'}</p>
+
+        <h1 class="mt-4 font-display text-4xl leading-[1.05] sm:text-6xl">
+          {principal?.titulo ?? 'Vinho bom não precisa de ocasião'}
+        </h1>
+
+        <p class="mt-5 max-w-lg text-lg leading-relaxed text-creme-300">
+          {
+            principal?.subtitulo ??
+              `Rótulos de ${paises.length} países escolhidos garrafa por garrafa. Escolhe no site, fecha no WhatsApp.`
+          }
+        </p>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a
+            href={principal?.ctaLink ?? '/vinhos/'}
+            class="rounded-lg bg-creme-100 px-6 py-3 font-medium text-noite-950 transition-colors hover:bg-white"
+          >
+            {principal?.ctaTexto ?? 'Ver a seleção'}
+          </a>
+          <a
+            href={linkDeContato('Oi! Queria uma indicação de vinho.')}
+            target="_blank"
+            rel="noreferrer"
+            class="rounded-lg border border-creme-300/40 px-6 py-3 text-creme-300 transition-colors hover:border-ouro-400 hover:text-creme-100"
+          >
+            Pedir indicação
+          </a>
+        </div>
+
+      </div>
+
+      {/* A segunda coluna fica vazia de propósito: é onde a garrafa da arte aparece. */}
+    </div>
+  </section>
+
+  <Esteira itens={RECADOS} />
+
+  {
+    secoes.map((secao) => (
+      <>
+        {secundario && secao.id === idDaSecaoDePromocao && <BannerPromocao banner={secundario} />}
+
+        <SecaoDeProdutos
+          titulo={secao.titulo}
+          subtitulo={secao.subtitulo}
+          produtos={secao.produtos}
+          verTudo="/vinhos/"
+        />
+      </>
+    ))
+  }
+
+  {/* Sem faixa de promoção na home, a chamada não some: entra depois das seções. */}
+  {secundario && !idDaSecaoDePromocao && <BannerPromocao banner={secundario} />}
+
+  <section class="revelar mx-auto max-w-6xl px-4 py-16 sm:px-6">
+    <h2 class="font-display text-3xl sm:text-4xl">Como funciona</h2>
+
+    <ol class="passos mt-10 grid gap-6 md:grid-cols-3">
+      {
+        COMO_FUNCIONA.map((passo, indice) => (
+          <li class="passo relative rounded-2xl border border-papel-200 bg-papel-0 p-6">
+            <span class="passo-numero font-display text-xl text-vinho-600">{indice + 1}</span>
+            <h3 class="mt-4 font-display text-xl">{passo.titulo}</h3>
+            <p class="mt-2 text-sm leading-relaxed">{passo.texto}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="revelar mx-auto max-w-6xl px-4 pb-8 sm:px-6">
+    <BlocoVinho class="mx-auto max-w-xl text-center">
+      <h2 class="font-display text-3xl sm:text-4xl">Não sabe qual escolher?</h2>
+      <p class="mt-3 leading-relaxed text-creme-300">
+        Conta o que você vai comer, com quem vai beber e quanto quer gastar. A gente indica.
+      </p>
+      <a
+        href={linkDeContato('Oi! Queria uma indicação de vinho. Vou beber com…')}
+        target="_blank"
+        rel="noreferrer"
+        class="mt-7 inline-block rounded-lg bg-creme-100 px-6 py-3 font-medium text-noite-950 transition-colors hover:bg-white"
+      >
+        Falar com a gente
+      </a>
+    </BlocoVinho>
+  </section>
+</BaseLayout>
+
+<style>
+  /**
+   * A arte do banner tem a garrafa e a taça à direita e parede vinho à
+   * esquerda, que é justamente onde o texto entra.
+   *
+   * No celular a seção fica mais alta do que larga e o `cover` corta as
+   * laterais: `object-position: 72%` segura a garrafa em quadro em vez de
+   * mostrar só a parede.
+   */
+  /* Quem sai do fluxo é o `<picture>`, não a imagem: como elemento inline vazio
+     ele ainda geraria uma linha em branco no topo da seção. */
+  .banner-moldura {
+    position: absolute;
+    inset: 0;
+    z-index: -20;
+  }
+
+  .banner-arte {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 72% center;
+  }
+
+  .banner-veu {
+    position: absolute;
+    inset: 0;
+    z-index: -10;
+    /* Duas camadas: escurecer o miolo pro texto e fechar a base na cor da
+       esteira, pra que uma faixa emende na outra sem linha aparente. */
+    background:
+      linear-gradient(to top, var(--color-vinho-800) 0, transparent 5rem),
+      linear-gradient(
+        180deg,
+        rgb(43 4 12 / 0.86) 0%,
+        rgb(43 4 12 / 0.68) 55%,
+        rgb(43 4 12 / 0.84) 100%
+      );
+  }
+
+  /* Da largura de tablet pra cima a arte inteira cabe: o véu vira lateral e
+     libera a garrafa, que fica na coluna vazia da direita. */
+  @media (min-width: 48rem) {
+    .banner-arte {
+      object-position: center;
+    }
+
+    .banner-veu {
+      background:
+        linear-gradient(to top, var(--color-vinho-800) 0, transparent 6rem),
+        linear-gradient(
+          100deg,
+          rgb(43 4 12 / 0.92) 0%,
+          rgb(43 4 12 / 0.78) 32%,
+          rgb(43 4 12 / 0.38) 54%,
+          rgb(43 4 12 / 0.1) 72%,
+          transparent 86%
+        );
+    }
+  }
+
+  /**
+   * "Como funciona" é uma sequência, não três cartões soltos: um tracejado liga
+   * um passo ao outro pelo miolo do número. Ele atravessa o `gap` de 1.5rem, e
+   * o `2.875rem` é onde o número fica: 1.5rem de padding do card mais metade
+   * do círculo de 2.75rem.
+   */
+  .passo-numero {
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    border: 1px solid var(--color-papel-200);
+    border-radius: 9999px;
+    background-color: var(--color-papel-50);
+  }
+
+  .passo + .passo::before {
+    content: '';
+    position: absolute;
+    border-color: var(--color-papel-300);
+  }
+
+  /* Empilhado: o traço desce da base de um card até o número do seguinte. */
+  .passo + .passo::before {
+    top: -1.5rem;
+    left: 2.875rem;
+    height: 1.5rem;
+    border-left-width: 1px;
+    border-left-style: dashed;
+  }
+
+  /* `min-width` e não `width >=`: a sintaxe de intervalo só existe do Safari
+     16.4 pra frente, e num iPad mais antigo o tracejado ficaria de pé no meio
+     de um layout de três colunas. */
+  @media (min-width: 48rem) {
+    .passo + .passo::before {
+      top: 2.875rem;
+      left: -1.5rem;
+      height: auto;
+      width: 1.5rem;
+      border-left-width: 0;
+      border-top-width: 1px;
+      border-top-style: dashed;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .passo {
+      transition:
+        border-color 0.2s var(--ease-suave),
+        transform 0.2s var(--ease-suave);
+    }
+
+    .passo:hover {
+      transform: translateY(-2px);
+      border-color: var(--color-papel-300);
+    }
+
+    /* O pulsar é de propósito curto no ganho de escala: chama sem saltar. */
+    .passo:hover .passo-numero {
+      animation: passo-pulsa 1.6s ease-in-out infinite;
+    }
+  }
+
+  @keyframes passo-pulsa {
+    0%,
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgb(142 27 49 / 0.28);
+    }
+    50% {
+      transform: scale(1.06);
+      box-shadow: 0 0 0 0.5rem rgb(142 27 49 / 0);
+    }
+  }
+</style>

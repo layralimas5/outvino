@@ -1,0 +1,149 @@
+---
+import { SITE } from '../config/site';
+
+/**
+ * Confirmação de maioridade.
+ *
+ * A loja vende bebida alcoólica e vender pra menor de 18 é crime (art. 243 do
+ * ECA). O portão não substitui a conferência de documento na entrega: é o
+ * aviso que a loja consegue dar aqui, e fica registrado no aparelho pra não
+ * perguntar de novo a cada visita.
+ *
+ * Nada de bloqueio por JavaScript escondendo conteúdo do rastreador: o
+ * atributo `data-portao` é gravado no `<html>` por um script inline no
+ * BaseLayout, antes da primeira pintura. Sem JS, o portão nunca aparece e o
+ * site continua navegável: falhar aberto é melhor do que falhar em branco.
+ *
+ * ⚠️ O script daqui é `is:inline` de propósito. Como módulo, ele só rodava
+ * depois do bundle carregar, e o clique no "Sim" ficava sem resposta por um
+ * tempo. Inline, o ouvinte já existe quando o portão aparece.
+ */
+---
+
+<div
+  id="portao"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="portao-titulo"
+  aria-describedby="portao-texto"
+>
+  <div
+    class="w-full max-w-md rounded-2xl border border-papel-200 bg-papel-0 px-6 py-10 text-center shadow-[0_24px_60px_-20px_rgba(23,17,20,0.45)] sm:px-10"
+  >
+    <p class="font-display text-2xl text-tinta-900">
+      <span class="text-[1.15em] text-vinho-600">O</span>utvino
+    </p>
+
+    <div data-portao-pergunta>
+      <h2 id="portao-titulo" class="mt-8 font-display text-3xl">Você tem 18 anos ou mais?</h2>
+
+      <p id="portao-texto" class="mt-3 text-sm leading-relaxed text-tinta-700">
+        A {SITE.name} vende bebida alcoólica. Venda proibida para menores de 18 anos. Na entrega
+        podemos pedir documento com foto.
+      </p>
+
+      <div class="mt-8 flex flex-col gap-3">
+        <button
+          type="button"
+          data-portao-sim
+          class="rounded-lg bg-vinho-600 px-6 py-3 font-medium text-creme-100 transition-colors hover:bg-vinho-700"
+        >
+          Sim, tenho 18 anos ou mais
+        </button>
+        <button
+          type="button"
+          data-portao-nao
+          class="rounded-lg border border-papel-300 px-6 py-3 text-tinta-700 transition-colors hover:border-vinho-600 hover:text-vinho-600"
+        >
+          Não tenho
+        </button>
+      </div>
+    </div>
+
+    <div data-portao-recusa hidden>
+      <h2 data-portao-recusa-titulo tabindex="-1" class="mt-8 font-display text-3xl">
+        A gente te espera
+      </h2>
+      <p class="mt-3 text-sm leading-relaxed text-tinta-700">
+        Só podemos vender para maiores de 18 anos. Volte quando fizer aniversário, a adega vai
+        estar aqui.
+      </p>
+    </div>
+
+    <p class="mt-8 text-xs text-tinta-500">Aprecie com moderação.</p>
+  </div>
+</div>
+
+<script is:inline>
+  /**
+   * Só cuida da interação. Quem decide se o portão aparece é o script inline do
+   * BaseLayout, que roda antes da primeira pintura.
+   */
+  (function () {
+    var CHAVE = 'outvino:maior18:v1';
+    var portao = document.getElementById('portao');
+
+    if (!portao || document.documentElement.dataset.portao !== 'fechado') return;
+
+    var pergunta = portao.querySelector('[data-portao-pergunta]');
+    var recusa = portao.querySelector('[data-portao-recusa]');
+    var sim = portao.querySelector('[data-portao-sim]');
+    var nao = portao.querySelector('[data-portao-nao]');
+
+    if (sim) sim.focus();
+
+    /** Tab não escapa do portão enquanto ele estiver no ar. */
+    function prender(evento) {
+      if (evento.key !== 'Tab') return;
+
+      var focaveis = Array.prototype.slice
+        .call(portao.querySelectorAll('button'))
+        .filter(function (elemento) {
+          return elemento.offsetParent !== null;
+        });
+
+      if (focaveis.length === 0) {
+        evento.preventDefault();
+        return;
+      }
+
+      var primeiro = focaveis[0];
+      var ultimo = focaveis[focaveis.length - 1];
+
+      if (evento.shiftKey && document.activeElement === primeiro) {
+        evento.preventDefault();
+        ultimo.focus();
+      } else if (!evento.shiftKey && document.activeElement === ultimo) {
+        evento.preventDefault();
+        primeiro.focus();
+      }
+    }
+
+    document.addEventListener('keydown', prender);
+
+    if (sim) {
+      sim.addEventListener('click', function () {
+        // Some primeiro, grava depois: storage lento não pode atrasar o clique.
+        document.documentElement.dataset.portao = 'aberto';
+        document.removeEventListener('keydown', prender);
+
+        try {
+          localStorage.setItem(CHAVE, '1');
+        } catch (erro) {
+          // Navegação anônima com storage bloqueado: segue sem lembrar da resposta.
+        }
+      });
+    }
+
+    if (nao) {
+      nao.addEventListener('click', function () {
+        if (pergunta) pergunta.setAttribute('hidden', '');
+        if (recusa) {
+          recusa.removeAttribute('hidden');
+          var titulo = recusa.querySelector('[data-portao-recusa-titulo]');
+          if (titulo) titulo.focus();
+        }
+      });
+    }
+  })();
+</script>

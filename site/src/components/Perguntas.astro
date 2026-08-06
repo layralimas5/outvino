@@ -1,0 +1,90 @@
+---
+/**
+ * Lista de perguntas frequentes em acordeão.
+ *
+ * Feito com `<details>`/`<summary>` nativo, e não com JavaScript: abre e fecha
+ * sem script nenhum, o teclado já navega e anuncia estado ("expandido" /
+ * "recolhido") sem precisar de `aria-expanded` na mão, e o Ctrl+F do navegador
+ * encontra a resposta mesmo fechada nos navegadores atuais.
+ *
+ * A primeira pergunta nasce aberta: uma lista toda fechada esconde que ali tem
+ * conteúdo, e a primeira resposta serve de amostra do que vem nas outras.
+ */
+export interface Pergunta {
+  pergunta: string;
+  resposta: string;
+}
+
+interface Props {
+  itens: Pergunta[];
+  /** Classe extra do bloco, para ajustar espaçamento na página. */
+  class?: string;
+}
+
+const { itens, class: classe } = Astro.props;
+---
+
+<div class:list={['divide-y divide-papel-200 border-y border-papel-200', classe]}>
+  {
+    itens.map((item, indice) => (
+      <details class="pergunta group" open={indice === 0}>
+        <summary class="flex cursor-pointer items-center justify-between gap-4 py-5 text-left">
+          <h3 class="font-display text-lg sm:text-xl">{item.pergunta}</h3>
+
+          {/* A seta é decorativa: quem lê por leitor de tela já ouve o estado
+              do próprio `<details>`. */}
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            class="seta size-5 shrink-0 text-vinho-600"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </summary>
+
+        <p class="pb-5 leading-relaxed text-tinta-700">{item.resposta}</p>
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  /* O triângulo padrão do navegador sai: a seta desenhada é a nossa. */
+  .pergunta summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .pergunta summary {
+    list-style: none;
+  }
+
+  /* O foco marca a linha inteira, não só o texto do título. */
+  .pergunta summary:focus-visible {
+    outline-offset: -2px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .seta {
+      transition: transform 0.2s var(--ease-suave);
+    }
+
+    .pergunta summary:hover .seta {
+      transform: translateY(2px);
+    }
+  }
+
+  .pergunta[open] .seta {
+    transform: rotate(180deg);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pergunta[open] summary:hover .seta {
+      transform: rotate(180deg) translateY(2px);
+    }
+  }
+</style>

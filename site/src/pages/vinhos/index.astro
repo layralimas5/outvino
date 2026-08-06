@@ -1,0 +1,611 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import CapaDePagina from '../../components/CapaDePagina.astro';
+import Icone from '../../components/Icone.astro';
+import { opcoes, produtos, textoDeBusca } from '../../lib/catalogo';
+import { comparadorDe, FAIXAS, ORDEM_PADRAO, ORDENS } from '../../lib/filtros';
+import { SITE } from '../../config/site';
+import { CAMPO } from '../../lib/ui';
+
+/**
+ * Catálogo inteiro renderizado no build. Os filtros são do cliente: mostram e
+ * escondem cartões que já estão na página, então o Google indexa todos os
+ * rótulos e filtrar não custa requisição nenhuma.
+ */
+const tipos = opcoes('tipo');
+const paises = opcoes('pais');
+
+const listagem = [...produtos].sort(comparadorDe(ORDEM_PADRAO));
+
+/**
+ * Os grupos do filtro lateral saem daqui para a marcação não repetir três
+ * vezes a mesma lista de checkbox — e para o script achar todos por `data-grupo`.
+ */
+const GRUPOS = [
+  { id: 'tipo', rotulo: 'Tipo', opcoes: tipos.map((tipo) => ({ valor: tipo, rotulo: tipo })) },
+  { id: 'pais', rotulo: 'País', opcoes: paises.map((pais) => ({ valor: pais, rotulo: pais })) },
+  {
+    id: 'preco',
+    rotulo: 'Preço',
+    opcoes: FAIXAS.map((faixa) => ({ valor: faixa.id, rotulo: faixa.rotulo })),
+  },
+];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Todos os vinhos',
+  description: SITE.description,
+  url: `${SITE.url}/vinhos/`,
+  mainEntity: {
+    '@type': 'ItemList',
+    numberOfItems: listagem.length,
+    itemListElement: listagem.map((produto, indice) => ({
+      '@type': 'ListItem',
+      position: indice + 1,
+      name: produto.nome,
+      url: `${SITE.url}/vinhos/${produto.id}/`,
+    })),
+  },
+};
+---
+
+<BaseLayout
+  title="Todos os vinhos"
+  description={`Catálogo completo da ${SITE.name}: ${listagem.length} rótulos de ${paises.length} países. Filtre por tipo, país e preço e feche o pedido pelo WhatsApp.`}
+  schema={schema}
+  headerSobreposto
+>
+  {/* Capa: a arte da marca desfocada sob um véu vinho, como nos blocos da home. */}
+  <CapaDePagina>
+    <nav aria-label="Trilha de navegação" class="text-xs text-creme-300/80">
+      <a href="/" class="transition-colors hover:text-ouro-400">Início</a>
+      <span aria-hidden="true" class="mx-1.5">/</span>
+      <span class="text-creme-100">Vinhos</span>
+    </nav>
+
+    <h1 class="mt-4 font-display text-4xl sm:text-5xl">Todos os vinhos</h1>
+
+    <p class="mt-4 max-w-2xl leading-relaxed text-creme-300">
+      {listagem.length} rótulos de {paises.length} países na adega agora. Filtra do jeito que fizer
+      sentido pra você, monta o carrinho e fecha no WhatsApp, sem cadastro.
+    </p>
+
+    <p class="mt-6 text-sm text-creme-300">
+      Não sabe por onde começar?{' '}
+      <a
+        href="/simule/"
+        class="border-b border-ouro-400/40 pb-0.5 text-ouro-400 transition-colors hover:border-ouro-400"
+      >
+        Responde o simulador
+      </a>{' '}
+      que a gente separa os rótulos pra você.
+    </p>
+  </CapaDePagina>
+
+  <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-12">
+    {/* Barra do celular: o filtro vira gaveta, e o botão diz quantos estão ativos. */}
+    <div class="mb-5 flex items-center gap-3 lg:hidden">
+      <button
+        type="button"
+        id="abrir-filtros"
+        aria-expanded="false"
+        aria-controls="painel-filtros"
+        class="inline-flex items-center gap-2 rounded-lg border border-papel-200 bg-papel-0 px-4 py-2.5 text-sm text-tinta-900 transition-colors hover:border-papel-300"
+      >
+        <Icone nome="filtro" class="size-4" />
+        Filtrar
+        <span
+          id="selo-filtros"
+          hidden
+          class="rounded-full bg-vinho-600 px-2 py-0.5 text-[11px] font-semibold text-creme-100"
+        ></span>
+      </button>
+
+      <label class="ml-auto flex items-center gap-2 text-sm text-tinta-500">
+        <span class="sr-only sm:not-sr-only">Ordenar</span>
+        <select
+          id="ordem-mobile"
+          data-ordem
+          aria-label="Ordenar por"
+          class="rounded-lg border border-papel-200 bg-papel-0 px-3 py-2 text-sm text-tinta-900 focus:border-vinho-600 focus:outline-none"
+        >
+          {ORDENS.map((ordem) => <option value={ordem.id}>{ordem.rotulo}</option>)}
+        </select>
+      </label>
+    </div>
+
+    <div class="lg:grid lg:grid-cols-[15rem_1fr] lg:items-start lg:gap-10">
+      {/* Fundo da gaveta no celular. No desktop nunca aparece. */}
+      <div
+        id="fundo-filtros"
+        hidden
+        class="fixed inset-0 z-40 bg-noite-950/50 backdrop-blur-sm lg:hidden"
+      >
+      </div>
+
+      <aside
+        id="painel-filtros"
+        data-aberto="false"
+        aria-label="Filtros do catálogo"
+        class:list={[
+          'bg-papel-0',
+          // Celular: gaveta que entra pela esquerda, escondida por padrão.
+          'max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:z-50 max-lg:w-[19rem] max-lg:max-w-[85vw]',
+          'max-lg:overflow-y-auto max-lg:p-5 max-lg:shadow-2xl',
+          // Só o `transform` entra na transição: `visibility` precisa virar no
+          // mesmo instante, senão o foco vai para um painel ainda invisível.
+          'max-lg:transition-transform max-lg:duration-300 max-lg:ease-out',
+          // `invisible` junto do deslocamento: fora da tela ela também sai da
+          // ordem de tabulação, senão o Tab entra num painel que ninguém vê.
+          'max-lg:invisible max-lg:-translate-x-full',
+          'max-lg:data-[aberto=true]:visible max-lg:data-[aberto=true]:translate-x-0',
+          // Desktop: coluna fixa que acompanha a rolagem da vitrine.
+          'lg:sticky lg:top-24 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto lg:pr-1',
+        ]}
+      >
+        <div class="mb-5 flex items-center justify-between lg:hidden">
+          <h2 class="font-display text-xl">Filtrar</h2>
+          <button
+            type="button"
+            id="fechar-filtros"
+            aria-label="Fechar filtros"
+            class="inline-flex size-9 items-center justify-center rounded-full transition-colors hover:bg-papel-100"
+          >
+            <Icone nome="fechar" class="size-5" />
+          </button>
+        </div>
+
+        <form id="filtros" role="search">
+          <label class="block">
+            <span class="mb-1.5 block text-xs tracking-wide text-tinta-500 uppercase">Buscar</span>
+            <input
+              type="search"
+              id="busca"
+              name="q"
+              placeholder="Uva, região, vinícola…"
+              autocomplete="off"
+              class={CAMPO}
+            />
+          </label>
+
+          {
+            GRUPOS.map((grupo) => (
+              <fieldset class="mt-6 border-t border-papel-100 pt-5">
+                <legend class="text-xs tracking-wide text-tinta-500 uppercase">
+                  {grupo.rotulo}
+                </legend>
+
+                <ul class="mt-3 space-y-1">
+                  {grupo.opcoes.map((opcao) => (
+                    <li>
+                      <label class="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm text-tinta-700 transition-colors hover:bg-papel-50 has-[:disabled]:cursor-default has-[:disabled]:text-tinta-500 has-[:disabled]:opacity-55">
+                        <input
+                          type="checkbox"
+                          data-grupo={grupo.id}
+                          value={opcao.valor}
+                          class="size-4 shrink-0 accent-vinho-600"
+                        />
+                        <span class="flex-1">{opcao.rotulo}</span>
+                        <span
+                          data-contagem={`${grupo.id}:${opcao.valor}`}
+                          class="text-xs text-tinta-500 tabular-nums"
+                        />
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </fieldset>
+            ))
+          }
+
+          <div class="mt-6 border-t border-papel-100 pt-5">
+            <label class="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm text-tinta-700 transition-colors hover:bg-papel-50">
+              <input
+                type="checkbox"
+                id="so-disponiveis"
+                class="size-4 shrink-0 accent-vinho-600"
+              />
+              <span>Só o que está disponível</span>
+            </label>
+          </div>
+
+          <button
+            type="button"
+            id="limpar"
+            hidden
+            class="mt-6 w-full rounded-lg border border-papel-200 px-4 py-2.5 text-sm text-tinta-700 transition-colors hover:border-papel-300 hover:text-tinta-900"
+          >
+            Limpar filtros
+          </button>
+        </form>
+
+        {/* Rodapé da gaveta: no celular, a saída é confirmar o resultado. */}
+        <button
+          type="button"
+          id="aplicar-filtros"
+          class="mt-6 w-full rounded-lg bg-vinho-600 px-4 py-3 text-sm font-medium text-creme-100 transition-colors hover:bg-vinho-700 lg:hidden"
+        >
+          Ver <span data-contagem-total>{listagem.length}</span> rótulos
+        </button>
+      </aside>
+
+      <div class="min-w-0">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-papel-100 pb-4">
+          <p id="contagem" aria-live="polite" class="text-sm text-tinta-500">
+            {listagem.length} rótulos
+          </p>
+
+          <label class="hidden items-center gap-2 text-sm text-tinta-500 lg:flex">
+            <span>Ordenar por</span>
+            <select
+              id="ordem"
+              data-ordem
+              class="rounded-lg border border-papel-200 bg-papel-0 px-3 py-2 text-sm text-tinta-900 focus:border-vinho-600 focus:outline-none"
+            >
+              {ORDENS.map((ordem) => <option value={ordem.id}>{ordem.rotulo}</option>)}
+            </select>
+          </label>
+        </div>
+
+        {/* Etiquetas do que está filtrado agora. O script preenche. */}
+        <div id="ativos" class="mt-4 flex flex-wrap gap-2 empty:mt-0"></div>
+
+        <div id="grade" class="mt-6 grid grid-cols-2 gap-4 xl:grid-cols-3">
+          {
+            listagem.map((produto) => (
+              <div
+                class="grid"
+                data-produto
+                data-tipo={produto.tipo}
+                data-pais={produto.pais}
+                data-preco={produto.preco}
+                data-nome={produto.nome}
+                data-destaque={String(produto.destaque)}
+                data-disponivel={String(produto.disponivel)}
+                data-busca={textoDeBusca(produto)}
+              >
+                <ProductCard produto={produto} />
+              </div>
+            ))
+          }
+        </div>
+
+        <div
+          id="vazio"
+          hidden
+          class="mt-12 rounded-2xl border border-papel-200 bg-papel-50 px-6 py-14 text-center"
+        >
+          <h2 class="font-display text-2xl text-tinta-900">Nada com esses filtros</h2>
+          <p class="mx-auto mt-2 max-w-md text-sm text-tinta-700">
+            Tenta afrouxar a busca, ou chama a gente no WhatsApp que procuramos o rótulo pra você.
+          </p>
+          <button
+            type="button"
+            id="limpar-vazio"
+            class="mt-6 rounded-lg bg-vinho-600 px-5 py-2.5 text-sm font-medium text-creme-100 transition-colors hover:bg-vinho-700"
+          >
+            Limpar filtros
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { comparadorDe, faixaPorId, ORDEM_PADRAO } from '../../lib/filtros';
+  import { normalizar } from '../../lib/texto';
+
+  /**
+   * Filtro, ordenação e contagem da vitrine.
+   *
+   * Nada é buscado: os cartões já vieram no HTML. Esconder é `style.display`
+   * (inline vence a classe utilitária do wrapper) e ordenar é `style.order`,
+   * que reordena o grid sem tocar no DOM.
+   *
+   * Cada grupo aceita mais de uma marcação, e a contagem ao lado de cada opção
+   * é a de um facet de ecommerce: quantos rótulos sobrariam se aquela opção
+   * fosse marcada, já considerando os outros grupos. Por isso o grupo em
+   * questão sai da conta — senão marcar "Tinto" zeraria "Branco" na hora.
+   */
+  const form = document.getElementById('filtros') as HTMLFormElement | null;
+  const busca = document.getElementById('busca') as HTMLInputElement | null;
+  const soDisponiveis = document.getElementById('so-disponiveis') as HTMLInputElement | null;
+  const contagem = document.getElementById('contagem');
+  const ativos = document.getElementById('ativos');
+  const vazio = document.getElementById('vazio');
+  const painel = document.getElementById('painel-filtros');
+  const fundo = document.getElementById('fundo-filtros');
+  const abrir = document.getElementById('abrir-filtros');
+  const selo = document.getElementById('selo-filtros');
+
+  if (form && busca && soDisponiveis && contagem && ativos && vazio) {
+    const caixas = [...form.querySelectorAll<HTMLInputElement>('input[data-grupo]')];
+    const ordens = [...document.querySelectorAll<HTMLSelectElement>('[data-ordem]')];
+
+    const cartoes = [...document.querySelectorAll<HTMLElement>('[data-produto]')].map((el) => ({
+      el,
+      tipo: el.dataset.tipo ?? '',
+      pais: el.dataset.pais ?? '',
+      nome: el.dataset.nome ?? '',
+      preco: Number(el.dataset.preco ?? 0),
+      destaque: el.dataset.destaque === 'true',
+      disponivel: el.dataset.disponivel === 'true',
+      busca: el.dataset.busca ?? '',
+    }));
+
+    type Cartao = (typeof cartoes)[number];
+
+    /** Um teste por grupo. Grupo sem nada marcado não filtra nada. */
+    const TESTES: Record<string, (cartao: Cartao, valor: string) => boolean> = {
+      tipo: (cartao, valor) => cartao.tipo === valor,
+      pais: (cartao, valor) => cartao.pais === valor,
+      preco: (cartao, valor) => {
+        const faixa = faixaPorId(valor);
+        return faixa !== undefined && cartao.preco >= faixa.min && cartao.preco <= faixa.max;
+      },
+    };
+
+    const grupos = [...new Set(caixas.map((caixa) => caixa.dataset.grupo!))];
+
+    const marcados = (grupo: string): string[] =>
+      caixas.filter((caixa) => caixa.dataset.grupo === grupo && caixa.checked).map((c) => c.value);
+
+    /**
+     * `exceto` deixa de fora um grupo da conta. É o que separa filtrar (todos
+     * os grupos valem) de contar o facet de um grupo (ele mesmo não vale).
+     */
+    function combina(cartao: Cartao, exceto?: string): boolean {
+      const termo = normalizar(busca!.value);
+
+      if (termo && !cartao.busca.includes(termo)) return false;
+      if (soDisponiveis!.checked && !cartao.disponivel) return false;
+
+      return grupos.every((grupo) => {
+        if (grupo === exceto) return true;
+        const valores = marcados(grupo);
+        return valores.length === 0 || valores.some((valor) => TESTES[grupo]!(cartao, valor));
+      });
+    }
+
+    function aplicar(): void {
+      const visiveis = cartoes.filter((cartao) => {
+        const passa = combina(cartao);
+        cartao.el.style.display = passa ? '' : 'none';
+        return passa;
+      });
+
+      const ordem = ordens[0]?.value ?? ORDEM_PADRAO;
+      [...visiveis].sort(comparadorDe(ordem)).forEach((cartao, indice) => {
+        cartao.el.style.order = String(indice);
+      });
+
+      const rotulo = visiveis.length === 1 ? '1 rótulo' : `${visiveis.length} rótulos`;
+      contagem!.textContent = rotulo;
+      vazio!.hidden = visiveis.length > 0;
+
+      document
+        .querySelectorAll('[data-contagem-total]')
+        .forEach((alvo) => (alvo.textContent = String(visiveis.length)));
+
+      atualizarFacets();
+      atualizarEtiquetas();
+      sincronizarUrl();
+    }
+
+    /** Quantos sobrariam com cada opção marcada. Zero desabilita a opção. */
+    function atualizarFacets(): void {
+      for (const caixa of caixas) {
+        const grupo = caixa.dataset.grupo!;
+        const total = cartoes.filter(
+          (cartao) => combina(cartao, grupo) && TESTES[grupo]!(cartao, caixa.value),
+        ).length;
+
+        const alvo = document.querySelector(`[data-contagem="${grupo}:${CSS.escape(caixa.value)}"]`);
+        if (alvo) alvo.textContent = String(total);
+
+        // Opção marcada nunca desabilita: a pessoa precisa poder desmarcar.
+        caixa.disabled = total === 0 && !caixa.checked;
+      }
+    }
+
+    /** Etiquetas do que está ativo, cada uma com o seu botão de remover. */
+    function atualizarEtiquetas(): void {
+      ativos!.textContent = '';
+
+      const remover: Array<{ rotulo: string; limpar: () => void }> = caixas
+        .filter((caixa) => caixa.checked)
+        .map((caixa) => ({
+          rotulo: caixa.parentElement?.querySelector('span')?.textContent?.trim() ?? caixa.value,
+          limpar: () => {
+            caixa.checked = false;
+          },
+        }));
+
+      if (busca!.value.trim()) {
+        remover.unshift({
+          rotulo: `"${busca!.value.trim()}"`,
+          limpar: () => {
+            busca!.value = '';
+          },
+        });
+      }
+
+      if (soDisponiveis!.checked) {
+        remover.push({
+          rotulo: 'Disponíveis',
+          limpar: () => {
+            soDisponiveis!.checked = false;
+          },
+        });
+      }
+
+      for (const item of remover) {
+        const botao = document.createElement('button');
+        botao.type = 'button';
+        botao.className =
+          'inline-flex items-center gap-1.5 rounded-full border border-papel-200 bg-papel-50 ' +
+          'py-1 pr-2 pl-3 text-xs text-tinta-700 transition-colors hover:border-papel-300 hover:text-tinta-900';
+        botao.append(item.rotulo);
+
+        const x = document.createElement('span');
+        x.setAttribute('aria-hidden', 'true');
+        x.className = 'text-sm leading-none text-tinta-500';
+        x.textContent = '×';
+        botao.append(x);
+
+        botao.setAttribute('aria-label', `Remover filtro ${item.rotulo}`);
+        botao.addEventListener('click', () => {
+          item.limpar();
+          aplicar();
+        });
+
+        ativos!.append(botao);
+      }
+
+      const quantos = remover.length;
+      const limpar = document.getElementById('limpar') as HTMLButtonElement | null;
+      if (limpar) limpar.hidden = quantos === 0;
+      if (selo) {
+        selo.hidden = quantos === 0;
+        selo.textContent = String(quantos);
+      }
+    }
+
+    /** Estado dos filtros na barra de endereço, assim o link fica compartilhável. */
+    function sincronizarUrl(): void {
+      const parametros = new URLSearchParams();
+      if (busca!.value.trim()) parametros.set('q', busca!.value.trim());
+
+      for (const grupo of grupos) {
+        const valores = marcados(grupo);
+        if (valores.length > 0) parametros.set(grupo, valores.join(','));
+      }
+
+      if (soDisponiveis!.checked) parametros.set('disponivel', '1');
+
+      const ordem = ordens[0]?.value ?? ORDEM_PADRAO;
+      if (ordem !== ORDEM_PADRAO) parametros.set('ordem', ordem);
+
+      const consulta = parametros.toString();
+      history.replaceState(null, '', consulta ? `?${consulta}` : location.pathname);
+    }
+
+    /** Query param é entrada de fora: só entra valor que existe no filtro. */
+    function restaurar(inicial: URLSearchParams): void {
+      busca!.value = inicial.get('q') ?? '';
+      soDisponiveis!.checked = inicial.get('disponivel') === '1';
+
+      for (const grupo of grupos) {
+        const valores = new Set((inicial.get(grupo) ?? '').split(',').filter(Boolean));
+        for (const caixa of caixas) {
+          if (caixa.dataset.grupo === grupo) caixa.checked = valores.has(caixa.value);
+        }
+      }
+
+      const ordem = inicial.get('ordem');
+      if (ordem && ordens[0] && [...ordens[0].options].some((opcao) => opcao.value === ordem)) {
+        ordens.forEach((select) => (select.value = ordem));
+      }
+    }
+
+    function limparTudo(): void {
+      form!.reset();
+      caixas.forEach((caixa) => (caixa.disabled = false));
+      ordens.forEach((select) => (select.value = ORDEM_PADRAO));
+      aplicar();
+    }
+
+    restaurar(new URLSearchParams(location.search));
+
+    form.addEventListener('input', aplicar);
+    form.addEventListener('change', aplicar);
+    form.addEventListener('submit', (evento) => evento.preventDefault());
+
+    // Os dois selects de ordem (celular e desktop) andam juntos.
+    ordens.forEach((select) =>
+      select.addEventListener('change', () => {
+        ordens.forEach((outro) => (outro.value = select.value));
+        aplicar();
+      }),
+    );
+
+    document.getElementById('limpar')?.addEventListener('click', limparTudo);
+    document.getElementById('limpar-vazio')?.addEventListener('click', () => {
+      limparTudo();
+      busca!.focus();
+    });
+
+    aplicar();
+  }
+
+  /**
+   * Gaveta de filtro do celular.
+   *
+   * Enquanto aberta a página não rola atrás, `Esc` fecha e o foco vai para o
+   * primeiro campo — é uma camada sobre o conteúdo, e navegar por teclado
+   * precisa entrar nela.
+   */
+  if (painel && fundo && abrir) {
+    function alternar(aberto: boolean): void {
+      painel!.dataset.aberto = String(aberto);
+      fundo!.hidden = !aberto;
+      abrir!.setAttribute('aria-expanded', String(aberto));
+      document.body.style.overflow = aberto ? 'hidden' : '';
+
+      /**
+       * O foco espera o próximo quadro: no instante do clique a gaveta ainda
+       * está `visibility: hidden`, e elemento invisível não recebe foco — o
+       * primeiro Tab acabaria caindo fora do painel.
+       */
+      if (aberto) {
+        window.requestAnimationFrame(() =>
+          (document.getElementById('busca') as HTMLInputElement | null)?.focus(),
+        );
+      } else {
+        abrir!.focus();
+      }
+    }
+
+    abrir.addEventListener('click', () => alternar(true));
+    fundo.addEventListener('click', () => alternar(false));
+    document.getElementById('fechar-filtros')?.addEventListener('click', () => alternar(false));
+    document.getElementById('aplicar-filtros')?.addEventListener('click', () => alternar(false));
+
+    /**
+     * Enquanto a gaveta está aberta ela é a página: o Tab circula dentro dela
+     * em vez de descer para a vitrine que está atrás do fundo escuro.
+     */
+    function focaveis(): HTMLElement[] {
+      return [
+        ...painel!.querySelectorAll<HTMLElement>('button, input, select, a[href]'),
+      ].filter((elemento) => !elemento.hasAttribute('disabled'));
+    }
+
+    document.addEventListener('keydown', (evento) => {
+      if (painel.dataset.aberto !== 'true') return;
+
+      if (evento.key === 'Escape') {
+        alternar(false);
+        return;
+      }
+
+      if (evento.key !== 'Tab') return;
+
+      const lista = focaveis();
+      const primeiro = lista[0];
+      const ultimo = lista[lista.length - 1];
+      if (!primeiro || !ultimo) return;
+
+      if (evento.shiftKey && document.activeElement === primeiro) {
+        evento.preventDefault();
+        ultimo.focus();
+      } else if (!evento.shiftKey && document.activeElement === ultimo) {
+        evento.preventDefault();
+        primeiro.focus();
+      }
+    });
+  }
+</script>

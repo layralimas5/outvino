@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { produtos } from '../lib/catalogo';
+import { SITE } from '../config/site';
+import { linkDeContato } from '../lib/whatsapp';
+
+/**
+ * Sobre nós: quem escolhe os vinhos e por quê.
+ *
+ * ⚠️ Não há história oficial da loja no briefing. O texto aqui é o que dá pra
+ * afirmar com segurança (curadoria própria, atendimento humano, preço aberto).
+ * Quando a Outvino mandar a história de verdade, essa página é a primeira a
+ * trocar.
+ */
+const paises = [...new Set(produtos.map((produto) => produto.pais))];
+
+const PRINCIPIOS = [
+  {
+    titulo: 'Curadoria de verdade',
+    texto:
+      'Nada entra sem passar pela taça. Se um rótulo não vale o que custa, ele não fica na prateleira, por mais bonita que seja a garrafa.',
+  },
+  {
+    titulo: 'Preço sem enrolação',
+    texto:
+      'O preço do site é o preço. Quando tem promoção, a gente mostra de quanto era. Sem cupom escondido e sem nota inventada pra empurrar garrafa.',
+  },
+  {
+    titulo: 'Gente, não robô',
+    texto:
+      'Quem responde o WhatsApp é quem escolheu os vinhos. Dá pra perguntar o que combina com o jantar de sábado e receber uma resposta que faz sentido.',
+  },
+];
+---
+
+<BaseLayout
+  title="Sobre nós"
+  description={`Quem é a ${SITE.name}: uma adega pequena, com curadoria própria de ${produtos.length} rótulos e atendimento feito por gente.`}
+>
+  <section class="border-b border-papel-200 bg-papel-50">
+    <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16">
+      <nav aria-label="Trilha de navegação" class="text-xs text-tinta-500">
+        <a href="/" class="transition-colors hover:text-vinho-600">Início</a>
+        <span aria-hidden="true" class="mx-1.5">/</span>
+        <span class="text-tinta-700">Sobre nós</span>
+      </nav>
+
+      <h1 class="mt-4 max-w-2xl font-display text-4xl leading-[1.1] sm:text-5xl">
+        Vinho bom, sem cerimônia
+      </h1>
+
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed">
+        A {SITE.name} não é catálogo de distribuidor. São rótulos de {paises.length} países que a gente
+        provou antes de colocar na prateleira, e um WhatsApp do outro lado pra te ajudar a escolher.
+      </p>
+    </div>
+  </section>
+
+  <section class="revelar mx-auto max-w-6xl px-4 py-14 sm:px-6">
+    <div class="grid gap-10 md:grid-cols-3">
+      {
+        PRINCIPIOS.map((principio) => (
+          <div>
+            <h2 class="font-display text-2xl">{principio.titulo}</h2>
+            <p class="mt-3 leading-relaxed">{principio.texto}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="revelar mx-auto max-w-6xl px-4 pb-16 sm:px-6">
+    <div class="no-escuro relative overflow-hidden rounded-2xl bg-noite-950 px-6 py-12 sm:px-12">
+      <div
+        class="absolute inset-0 bg-[radial-gradient(ellipse_at_75%_40%,rgba(179,39,63,0.28),transparent_65%)]"
+        aria-hidden="true"
+      >
+      </div>
+
+      <div class="relative max-w-xl">
+        <p class="eyebrow">Como a gente trabalha</p>
+        <h2 class="mt-3 font-display text-3xl">A garrafa é a estrela, não o discurso</h2>
+        <p class="mt-3 leading-relaxed text-creme-300">
+          Sem brasão, sem pergaminho e sem nota de crítico que ninguém conferiu. A gente conta o que
+          o vinho é, com o que combina e quanto custa. O resto é você abrir e beber.
+        </p>
+        <a
+          href="/adega/"
+          class="mt-7 inline-block rounded-lg bg-creme-100 px-6 py-3 font-medium text-noite-950 transition-colors hover:bg-white"
+        >
+          Ver o que tem na adega
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="revelar mx-auto max-w-3xl px-4 pb-16 sm:px-6">
+    <div class="rounded-2xl border border-papel-200 bg-papel-50 px-6 py-10 text-center">
+      <h2 class="font-display text-2xl">Quer uma indicação?</h2>
+      <p class="mx-auto mt-2 max-w-md">
+        Conta o que você vai comer, com quem vai beber e quanto quer gastar. A gente sugere dois ou
+        três rótulos.
+      </p>
+      <a
+        href={linkDeContato('Oi! Queria uma indicação de vinho. Vou beber com…')}
+        target="_blank"
+        rel="noreferrer"
+        class="mt-6 inline-block rounded-lg bg-vinho-600 px-6 py-3 font-medium text-creme-100 transition-colors hover:bg-vinho-700"
+      >
+        Falar com a gente
+      </a>
+    </div>
+
+    <p class="mt-8 text-center text-xs text-tinta-500">
+      Venda proibida para menores de 18 anos. Aprecie com moderação.
+    </p>
+  </section>
+</BaseLayout>

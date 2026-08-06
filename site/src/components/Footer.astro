@@ -1,0 +1,126 @@
+---
+import { RODAPE_LINKS, SITE } from '../config/site';
+
+const ano = new Date().getFullYear();
+
+const ATENDIMENTO = [
+  { href: '/rastreio/', rotulo: 'Rastrear pedido' },
+  { href: '/conta/', rotulo: 'Minha conta' },
+  { href: '/contato/', rotulo: 'Fale com a gente' },
+];
+
+const INSTITUCIONAL = [
+  { href: '/trocas-e-devolucoes/', rotulo: 'Trocas e devoluções' },
+  { href: '/termos/', rotulo: 'Termos de uso e venda' },
+  { href: '/privacidade/', rotulo: 'Privacidade' },
+];
+---
+
+<footer class="rodape no-escuro mt-24 text-creme-300">
+  <div
+    class="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.4fr_repeat(4,1fr)]"
+  >
+    <div class="sm:col-span-2 lg:col-span-1">
+      <p class="font-display text-2xl text-creme-100">
+        <span class="text-[1.15em] text-ouro-400">O</span>utvino
+      </p>
+      <p class="mt-3 max-w-xs text-sm leading-relaxed text-creme-500">
+        {SITE.shortDescription}
+      </p>
+    </div>
+
+    <nav aria-label="Rodapé">
+      <h2 class="eyebrow">Navegar</h2>
+      <ul class="mt-3 space-y-2 text-sm">
+        {
+          RODAPE_LINKS.map((link) => (
+            <li>
+              <a href={link.href} class="transition-colors hover:text-ouro-400">
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <nav aria-label="Atendimento">
+      <h2 class="eyebrow">Pedido</h2>
+      <ul class="mt-3 space-y-2 text-sm">
+        {
+          ATENDIMENTO.map((item) => (
+            <li>
+              <a href={item.href} class="transition-colors hover:text-ouro-400">
+                {item.rotulo}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <nav aria-label="Institucional">
+      <h2 class="eyebrow">Institucional</h2>
+      <ul class="mt-3 space-y-2 text-sm">
+        {
+          INSTITUCIONAL.map((item) => (
+            <li>
+              <a href={item.href} class="transition-colors hover:text-ouro-400">
+                {item.rotulo}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div>
+      <h2 class="eyebrow">Falar com a gente</h2>
+      <ul class="mt-3 space-y-2 text-sm">
+        <li>
+          <a
+            href={`https://wa.me/${SITE.whatsapp}`}
+            target="_blank"
+            rel="noreferrer"
+            class="transition-colors hover:text-ouro-400"
+          >
+            WhatsApp
+          </a>
+        </li>
+        <li>
+          <a
+            href={SITE.instagram}
+            target="_blank"
+            rel="noreferrer"
+            class="transition-colors hover:text-ouro-400"
+          >
+            Instagram
+          </a>
+        </li>
+        <li class="text-creme-500">{SITE.openingHours}</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="border-t border-vinho-800">
+    <div
+      class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-5 text-xs text-creme-500 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+    >
+      <p>© {ano} {SITE.name}. Todos os direitos reservados.</p>
+      <p>Venda proibida para menores de 18 anos. Aprecie com moderação.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  /* O vinho do rodapé é o mesmo do banner e da esteira: a página abre e fecha
+     na cor da marca. O degradê deixa o topo um tom acima pra separar do
+     conteúdo claro sem precisar de borda. */
+  .rodape {
+    background: linear-gradient(
+      180deg,
+      var(--color-vinho-800) 0%,
+      var(--color-vinho-900) 55%
+    );
+  }
+</style>

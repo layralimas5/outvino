@@ -1,0 +1,34 @@
+---
+import type { Banner } from '../lib/catalogo';
+import BlocoVinho from './BlocoVinho.astro';
+
+/**
+ * Chamada da promoção da vez, logo acima da faixa "Em promoção".
+ */
+interface Props {
+  banner: Banner;
+}
+
+const { banner } = Astro.props;
+---
+
+<section class="revelar mx-auto max-w-6xl px-4 pt-14 sm:px-6">
+  <BlocoVinho class="max-w-xl">
+    {banner.eyebrow && <p class="eyebrow">{banner.eyebrow}</p>}
+
+    <h2 class="mt-3 font-display text-3xl sm:text-4xl">{banner.titulo}</h2>
+
+    {banner.subtitulo && <p class="mt-3 leading-relaxed text-creme-300">{banner.subtitulo}</p>}
+
+    {
+      banner.ctaLink && (
+        <a
+          href={banner.ctaLink}
+          class="mt-7 inline-block rounded-lg bg-creme-100 px-6 py-3 font-medium text-noite-950 transition-colors hover:bg-white"
+        >
+          {banner.ctaTexto ?? 'Ver mais'}
+        </a>
+      )
+    }
+  </BlocoVinho>
+</section>

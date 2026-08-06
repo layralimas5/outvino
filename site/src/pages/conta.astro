@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { CAMPO } from '../lib/ui';
+import { SITE } from '../config/site';
+
+/**
+ * Minha conta.
+ *
+ * ⚠️ Placeholder consciente: o checkout da Outvino é sem cadastro e a API não
+ * tem autenticação de cliente. A tela existe pra o ícone do header ter destino
+ * e pro layout estar pronto: os campos ficam desabilitados e o aviso explica
+ * o porquê, em vez de fingir um login que não autentica ninguém.
+ */
+const VANTAGENS = [
+  'Histórico dos seus pedidos, sem precisar procurar no WhatsApp',
+  'Endereço de entrega salvo pra fechar o pedido mais rápido',
+  'Aviso quando um rótulo que você comprou voltar pro estoque',
+];
+---
+
+<BaseLayout title="Minha conta" description={`Área do cliente da ${SITE.name}.`} noindex>
+  <section class="mx-auto max-w-md px-4 py-16 sm:px-6 md:py-24">
+    <h1 class="font-display text-3xl">Minha conta</h1>
+
+    <div
+      role="status"
+      class="mt-5 rounded-2xl border border-ouro-500/40 bg-ouro-400/10 px-4 py-3 text-sm"
+    >
+      A conta ainda não está no ar. Hoje dá pra comprar sem cadastro nenhum: monta o carrinho e fecha
+      o pedido pelo WhatsApp.
+    </div>
+
+    <form class="mt-8 rounded-2xl border border-papel-200 bg-papel-0 p-6" inert>
+      <label class="block">
+        <span class="mb-1.5 block text-xs tracking-wide text-tinta-500 uppercase">E-mail</span>
+        <input type="email" disabled placeholder="voce@email.com" class={CAMPO} />
+      </label>
+
+      <label class="mt-4 block">
+        <span class="mb-1.5 block text-xs tracking-wide text-tinta-500 uppercase">Senha</span>
+        <input type="password" disabled placeholder="••••••••" class={CAMPO} />
+      </label>
+
+      <button
+        type="button"
+        disabled
+        class="mt-6 w-full cursor-not-allowed rounded-lg bg-papel-100 px-6 py-3 font-medium text-tinta-500"
+      >
+        Entrar
+      </button>
+    </form>
+
+    <h2 class="mt-12 font-display text-xl">O que vem por aí</h2>
+    <ul class="mt-4 space-y-2.5 text-sm">
+      {
+        VANTAGENS.map((vantagem) => (
+          <li class="flex gap-2.5">
+            <span aria-hidden="true" class="text-vinho-600">
+              •
+            </span>
+            {vantagem}
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="mt-10 flex flex-wrap gap-3">
+      <a
+        href="/vinhos/"
+        class="rounded-lg bg-vinho-600 px-6 py-3 font-medium text-creme-100 transition-colors hover:bg-vinho-700"
+      >
+        Ver os vinhos
+      </a>
+      <a
+        href="/rastreio/"
+        class="rounded-lg border border-papel-300 px-6 py-3 transition-colors hover:border-vinho-600 hover:text-vinho-600"
+      >
+        Rastrear pedido
+      </a>
+    </div>
+  </section>
+</BaseLayout>

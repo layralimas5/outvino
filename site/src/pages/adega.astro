@@ -1,0 +1,155 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CapaDePagina from '../components/CapaDePagina.astro';
+import BlocoVinho from '../components/BlocoVinho.astro';
+import Perguntas from '../components/Perguntas.astro';
+import { produtos } from '../lib/catalogo';
+import { SITE } from '../config/site';
+import { linkDeContato } from '../lib/whatsapp';
+
+/**
+ * A adega: o que tem na prateleira e como comprar.
+ *
+ * ⚠️ O texto fala só do que já está confirmado. Região de entrega, prazo e
+ * endereço da loja ainda estão em aberto no briefing. Enquanto não vierem,
+ * tudo aqui remete ao WhatsApp em vez de prometer número que a loja não deu.
+ */
+const paises = [...new Set(produtos.map((produto) => produto.pais))].sort((a, b) =>
+  a.localeCompare(b, 'pt-BR'),
+);
+
+const tipos = [...new Set(produtos.map((produto) => produto.tipo))].sort((a, b) =>
+  a.localeCompare(b, 'pt-BR'),
+);
+
+const PERGUNTAS = [
+  {
+    pergunta: 'Como faço o pedido?',
+    resposta:
+      'Monta o carrinho aqui no site e clica em fechar pedido. A gente recebe tudo pronto no WhatsApp, confirma o estoque e combina pagamento e entrega por lá. Não precisa criar conta.',
+  },
+  {
+    pergunta: 'Dá pra pagar no site?',
+    resposta:
+      'Ainda não. O pagamento é combinado direto com a gente no WhatsApp, do jeito que for melhor pra você.',
+  },
+  {
+    pergunta: 'Vocês entregam ou eu retiro?',
+    resposta:
+      'Os dois. Na hora de fechar o pedido você escolhe retirar na loja ou receber em casa, e o frete a gente acerta na conversa.',
+  },
+  {
+    pergunta: 'Não sei escolher. Vocês indicam?',
+    resposta:
+      'É a parte que a gente mais gosta. Conta o que vai comer, com quem vai beber e quanto quer gastar que a gente sugere dois ou três rótulos.',
+  },
+];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: PERGUNTAS.map((item) => ({
+    '@type': 'Question',
+    name: item.pergunta,
+    acceptedAnswer: { '@type': 'Answer', text: item.resposta },
+  })),
+};
+---
+
+<BaseLayout
+  title="A adega"
+  description={`O que tem na adega da ${SITE.name}: ${produtos.length} rótulos de ${paises.length} países, e como comprar: carrinho no site, pedido fechado no WhatsApp.`}
+  schema={schema}
+  headerSobreposto
+>
+  <CapaDePagina>
+    <nav aria-label="Trilha de navegação" class="text-xs text-creme-300/80">
+      <a href="/" class="transition-colors hover:text-ouro-400">Início</a>
+      <span aria-hidden="true" class="mx-1.5">/</span>
+      <span class="text-creme-100">A adega</span>
+    </nav>
+
+    <h1 class="mt-4 max-w-2xl font-display text-4xl leading-[1.1] sm:text-5xl">
+      Uma adega pequena, escolhida na taça
+    </h1>
+
+    <p class="mt-5 max-w-2xl text-lg leading-relaxed text-creme-300">
+      São {produtos.length} rótulos de {paises.length} países na prateleira agora. A lista muda conforme
+      o lote acaba: quando um vinho sai, entra outro que passou pelo mesmo teste.
+    </p>
+  </CapaDePagina>
+
+  <section class="revelar mx-auto max-w-6xl px-4 py-14 sm:px-6">
+    <div class="grid gap-10 md:grid-cols-2">
+      <div>
+        <h2 class="font-display text-2xl">O que você encontra</h2>
+        <ul class="mt-4 flex flex-wrap gap-2">
+          {
+            tipos.map((tipo) => (
+              <li>
+                <a
+                  href={`/vinhos/?tipo=${encodeURIComponent(tipo)}`}
+                  class="inline-block rounded-full border border-papel-200 px-3.5 py-1.5 text-sm transition-colors hover:border-vinho-600 hover:text-vinho-600"
+                >
+                  {tipo}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl">De onde vêm</h2>
+        <ul class="mt-4 flex flex-wrap gap-2">
+          {
+            paises.map((pais) => (
+              <li>
+                <a
+                  href={`/vinhos/?pais=${encodeURIComponent(pais)}`}
+                  class="inline-block rounded-full border border-papel-200 px-3.5 py-1.5 text-sm transition-colors hover:border-vinho-600 hover:text-vinho-600"
+                >
+                  {pais}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <a
+      href="/vinhos/"
+      class="mt-10 inline-block rounded-lg bg-vinho-600 px-6 py-3 font-medium text-creme-100 transition-colors hover:bg-vinho-700"
+    >
+      Ver o catálogo
+    </a>
+  </section>
+
+  <section class="revelar mx-auto max-w-3xl px-4 pb-16 sm:px-6">
+    <h2 class="font-display text-3xl">Perguntas que sempre chegam</h2>
+
+    <Perguntas itens={PERGUNTAS} class="mt-8" />
+
+    <div class="mt-10">
+      <BlocoVinho class="mx-auto max-w-xl text-center">
+        <h2 class="font-display text-2xl">Ficou com dúvida?</h2>
+        <p class="mx-auto mt-2 max-w-md text-creme-300">
+          Chama no WhatsApp. A gente responde no horário da loja: {SITE.openingHours.toLowerCase()}.
+        </p>
+        <a
+          href={linkDeContato('Oi! Vi o site da Outvino e queria tirar uma dúvida.')}
+          target="_blank"
+          rel="noreferrer"
+          class="mt-6 inline-block rounded-lg bg-creme-100 px-6 py-3 font-medium text-noite-950 transition-colors hover:bg-white"
+        >
+          Falar com a gente
+        </a>
+      </BlocoVinho>
+    </div>
+
+    <p class="mt-8 text-center text-xs text-tinta-500">
+      Venda proibida para menores de 18 anos. Aprecie com moderação.
+    </p>
+  </section>
+</BaseLayout>

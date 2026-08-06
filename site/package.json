@@ -1,0 +1,38 @@
+{
+  "name": "outvino-site",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "sync": "node scripts/sincronizar-catalogo.mjs",
+    "og": "node scripts/gerar-og.mjs",
+    "banners": "node scripts/otimizar-banners.mjs",
+    "produtos": "node scripts/otimizar-produtos.mjs"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.4.0",
+    "@astrojs/sitemap": "^3.7.0",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/montserrat": "^5.3.0",
+    "@fontsource-variable/playfair-display": "^5.2.5",
+    "@nanostores/persistent": "^1.1.0",
+    "@nanostores/react": "^1.0.0",
+    "@tailwindcss/vite": "^4.1.14",
+    "astro": "^5.14.0",
+    "nanostores": "^1.0.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tailwindcss": "^4.1.14"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "sharp": "^0.34.5",
+    "typescript": "^5.9.3"
+  }
+}

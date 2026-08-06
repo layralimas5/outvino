@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Outvino">
+  <rect width="64" height="64" rx="12" fill="#0b0709" />
+  <circle cx="32" cy="30" r="15" fill="none" stroke="#d9b76a" stroke-width="5" />
+  <rect x="29" y="44" width="6" height="10" rx="1" fill="#d9b76a" />
+  <rect x="22" y="52" width="20" height="5" rx="2" fill="#d9b76a" />
+</svg>

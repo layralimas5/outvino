@@ -1,0 +1,161 @@
+---
+import { NAV_ACOES, NAV_LINKS } from '../config/site';
+import { BOTAO_ICONE } from '../lib/ui';
+import CartButton from './react/CartButton';
+import Icone from './Icone.astro';
+
+interface Props {
+  /**
+   * Página que abre com banner escuro. O header flutua por cima sem cor
+   * nenhuma e só ganha fundo desfocado depois que a pessoa rola.
+   */
+  sobreposto?: boolean;
+}
+
+const { sobreposto = false } = Astro.props;
+const atual = Astro.url.pathname;
+
+/** Estado inicial: quem não tem banner já nasce sólido e nunca muda. */
+const estadoInicial = sobreposto ? 'transparente' : 'solido';
+
+const ehAtual = (href: string) => atual === href || atual.startsWith(href);
+
+const linkClasse =
+  'border-b border-transparent pb-0.5 text-sm opacity-80 transition-opacity ' +
+  'hover:opacity-100 aria-[current=page]:border-current aria-[current=page]:opacity-100';
+
+/**
+ * O "O" maior do wordmark. A classe sai daqui, e não do atributo, pra marcação
+ * caber numa linha só: quebra de linha entre o `</span>` e o "utvino" vira
+ * espaço no HTML e a marca aparece como "O utvino".
+ */
+const marcaInicial =
+  'text-[1.15em] text-ouro-400 transition-colors group-data-[estado=solido]:text-vinho-600';
+---
+
+<header
+  id="cabecalho"
+  data-estado={estadoInicial}
+  data-sobreposto={sobreposto ? '' : undefined}
+  class:list={[
+    'group z-40 text-creme-100 transition-[background-color,border-color,color] duration-300',
+    'data-[estado=solido]:border-b data-[estado=solido]:border-papel-200',
+    'data-[estado=solido]:bg-papel-0/85 data-[estado=solido]:text-tinta-900',
+    'data-[estado=solido]:backdrop-blur-xl',
+    sobreposto ? 'fixed inset-x-0 top-0' : 'sticky top-0',
+  ]}
+>
+  <div class="mx-auto flex max-w-6xl items-center gap-6 px-4 py-4 sm:px-6">
+    <a href="/" class="font-display text-2xl leading-none tracking-tight">
+      <span class={marcaInicial}>O</span>utvino
+    </a>
+
+    <nav aria-label="Principal" class="hidden lg:block">
+      <ul class="flex items-center gap-7">
+        {
+          NAV_LINKS.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                aria-current={ehAtual(link.href) ? 'page' : undefined}
+                class={linkClasse}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="ml-auto flex items-center gap-1">
+      {
+        NAV_ACOES.map((acao) => (
+          <a
+            href={acao.href}
+            aria-label={acao.rotulo}
+            title={acao.rotulo}
+            target={acao.externo ? '_blank' : undefined}
+            rel={acao.externo ? 'noreferrer' : undefined}
+            aria-current={!acao.externo && ehAtual(acao.href) ? 'page' : undefined}
+            class={BOTAO_ICONE}
+          >
+            <Icone nome={acao.icone} />
+          </a>
+        ))
+      }
+
+      <CartButton client:load />
+
+      <button
+        type="button"
+        id="abrir-menu"
+        aria-expanded="false"
+        aria-controls="menu-mobile"
+        aria-label="Abrir menu"
+        class={`${BOTAO_ICONE} lg:hidden`}
+      >
+        <Icone nome="menu" class="size-5 group-data-[menu=aberto]:hidden" />
+        <Icone nome="fechar" class="hidden size-5 group-data-[menu=aberto]:block" />
+      </button>
+    </div>
+  </div>
+
+  <nav
+    id="menu-mobile"
+    aria-label="Principal"
+    hidden
+    class="border-t border-papel-200 bg-papel-0 text-tinta-900 lg:hidden"
+  >
+    <ul class="mx-auto max-w-6xl px-4 py-2 sm:px-6">
+      {
+        NAV_LINKS.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              aria-current={ehAtual(link.href) ? 'page' : undefined}
+              class="block border-b border-papel-100 py-3.5 text-sm last:border-0 aria-[current=page]:text-vinho-600"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<script>
+  /**
+   * Duas coisas mexem no estado do cabeçalho: o scroll (só onde ele está
+   * sobreposto ao banner) e o menu mobile aberto, que precisa de fundo sólido
+   * pra o texto do painel não brigar com a imagem atrás.
+   */
+  const cabecalho = document.getElementById('cabecalho');
+  const botao = document.getElementById('abrir-menu');
+  const menu = document.getElementById('menu-mobile');
+
+  if (cabecalho) {
+    const sobreposto = cabecalho.dataset.sobreposto !== undefined;
+    let menuAberto = false;
+
+    function sincronizarEstado(): void {
+      const solido = !sobreposto || menuAberto || window.scrollY > 24;
+      cabecalho!.dataset.estado = solido ? 'solido' : 'transparente';
+    }
+
+    if (sobreposto) {
+      window.addEventListener('scroll', sincronizarEstado, { passive: true });
+      sincronizarEstado();
+    }
+
+    botao?.addEventListener('click', () => {
+      menuAberto = !menuAberto;
+      botao.setAttribute('aria-expanded', String(menuAberto));
+      botao.setAttribute('aria-label', menuAberto ? 'Fechar menu' : 'Abrir menu');
+      cabecalho.dataset.menu = menuAberto ? 'aberto' : 'fechado';
+      if (menu) menu.hidden = !menuAberto;
+      sincronizarEstado();
+    });
+  }
+</script>

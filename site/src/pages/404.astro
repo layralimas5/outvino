@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Garrafa from '../components/Garrafa.astro';
+import { linkDeContato } from '../lib/whatsapp';
+---
+
+<BaseLayout
+  title="Página não encontrada"
+  description="Essa página não existe mais. Volte para o catálogo da Outvino."
+  noindex
+>
+  <section class="mx-auto flex max-w-2xl flex-col items-center px-4 py-24 text-center sm:px-6">
+    <Garrafa tipo="Tinto" class="h-40 w-auto opacity-70" />
+
+    <p class="eyebrow mt-8">Erro 404</p>
+
+    <h1 class="mt-3 font-display text-4xl text-tinta-900 sm:text-5xl">Essa taça está vazia</h1>
+
+    <p class="mt-4 text-tinta-700">
+      A página que você procurou não existe, ou o rótulo saiu do catálogo. Acontece: lote acaba.
+    </p>
+
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a
+        href="/vinhos/"
+        class="rounded-lg bg-vinho-600 px-6 py-3 font-medium text-creme-100 transition-colors hover:bg-vinho-700"
+      >
+        Ver os vinhos
+      </a>
+      <a
+        href={linkDeContato('Oi! Procurei um vinho no site e não achei. Vocês têm?')}
+        target="_blank"
+        rel="noreferrer"
+        class="rounded-lg border border-papel-300 px-6 py-3 text-tinta-700 transition-colors hover:border-vinho-600 hover:text-tinta-900"
+      >
+        Perguntar no WhatsApp
+      </a>
+    </div>
+  </section>
+</BaseLayout>
