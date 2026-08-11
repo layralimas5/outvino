@@ -221,7 +221,57 @@ export interface Financeiro {
   pipeline: { pedidos: number; centavos: number };
 }
 
-/** Ficha montada a partir dos pedidos. Não existe cadastro de cliente. */
+/**
+ * Colunas do quadro do CRM.
+ *
+ * Quatro saem do histórico de pedidos sozinhas. `conversa` é a única que
+ * nenhum dado prova — só existe quando alguém arrasta o card pra lá.
+ */
+export type EtapaDeCliente = 'lead' | 'conversa' | 'cliente' | 'recorrente' | 'sumido';
+
+export const ETAPAS: EtapaDeCliente[] = ['lead', 'conversa', 'cliente', 'recorrente', 'sumido'];
+
+/** Título, explicação e cor de cada coluna. Fonte única do quadro. */
+export const COLUNA_DA_ETAPA: Record<
+  EtapaDeCliente,
+  { titulo: string; descricao: string; faixa: string; badge: string }
+> = {
+  lead: {
+    titulo: 'Lead',
+    descricao: 'Montou carrinho e não fechou',
+    faixa: 'bg-stone-400',
+    badge: 'bg-stone-100 text-stone-700 ring-stone-200',
+  },
+  conversa: {
+    titulo: 'Em conversa',
+    descricao: 'Você está negociando agora',
+    faixa: 'bg-amber-400',
+    badge: 'bg-amber-100 text-amber-900 ring-amber-200',
+  },
+  cliente: {
+    titulo: 'Cliente',
+    descricao: 'Comprou uma vez',
+    faixa: 'bg-sky-400',
+    badge: 'bg-sky-100 text-sky-900 ring-sky-200',
+  },
+  recorrente: {
+    titulo: 'Recorrente',
+    descricao: 'Voltou a comprar',
+    faixa: 'bg-emerald-400',
+    badge: 'bg-emerald-100 text-emerald-900 ring-emerald-200',
+  },
+  sumido: {
+    titulo: 'Sumido',
+    descricao: 'Comprou e parou — fila de reativação',
+    faixa: 'bg-orange-400',
+    badge: 'bg-orange-100 text-orange-900 ring-orange-200',
+  },
+};
+
+/**
+ * A ficha de cada pessoa, de duas fontes: o histórico sai dos **pedidos** (nunca
+ * é digitado) e o resto vem do **cadastro**, quando a loja preencheu um.
+ */
 export interface Cliente {
   telefone: string;
   nome: string;
@@ -230,18 +280,48 @@ export interface Cliente {
   pedidos: number;
   totalCentavos: number;
   ticketMedioCentavos: number;
-  primeiroEm: string;
-  ultimoEm: string;
+  /** Ausentes em quem só tem cadastro: nunca houve compra pra datar. */
+  primeiroEm?: string;
+  ultimoEm?: string;
   diasSemComprar: number;
   rascunhos: number;
   cancelados: number;
   recorrente: boolean;
   preferido?: string;
+  /** Coluna onde o card está. */
+  etapa: EtapaDeCliente;
+  /** Onde os pedidos, sozinhos, colocariam a pessoa. */
+  etapaAutomatica: EtapaDeCliente;
+  /** A coluna veio de um movimento no quadro, não do histórico. */
+  etapaManual: boolean;
+  /** Tem ficha cadastrada à mão, além do que os pedidos contam. */
+  cadastrado: boolean;
+  /** CPF ou CNPJ, só dígitos. */
+  documento?: string;
+  /** AAAA-MM-DD. */
+  nascimento?: string;
+  endereco?: Endereco;
+  preferencias?: string;
+  observacao?: string;
+  cadastradoEm?: string;
+}
+
+/** O que o formulário de cadastro manda pra API. */
+export interface FichaDeCliente {
+  nome: string;
+  telefone: string;
+  email?: string;
+  documento?: string;
+  nascimento?: string;
+  endereco?: Endereco;
+  preferencias?: string;
+  observacao?: string;
 }
 
 export interface CarteiraDeClientes {
   resumo: {
     total: number;
+    cadastrados: number;
     recorrentes: number;
     novosNoMes: number;
     sumidos: number;

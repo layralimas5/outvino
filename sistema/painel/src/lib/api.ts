@@ -99,5 +99,6 @@ export const api = {
     requisitar<T>(caminho, { method: 'POST', body: JSON.stringify(corpo ?? {}) }),
   patch: <T,>(caminho: string, corpo: unknown) =>
     requisitar<T>(caminho, { method: 'PATCH', body: JSON.stringify(corpo) }),
-  remover: (caminho: string) => requisitar<void>(caminho, { method: 'DELETE' }),
+  /** Sem tipo, é o 204 vazio do costume; com tipo, o recurso que sobrou. */
+  remover: <T = void,>(caminho: string) => requisitar<T>(caminho, { method: 'DELETE' }),
 };

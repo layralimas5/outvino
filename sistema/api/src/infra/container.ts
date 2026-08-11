@@ -1,5 +1,7 @@
 import { join } from 'node:path';
 import type { Avaliacao } from '../domain/avaliacoes/Avaliacao.js';
+import type { ClienteCadastrado } from '../domain/clientes/Cliente.js';
+import type { EtapaEscolhida } from '../domain/clientes/EtapaDeCliente.js';
 import type { Cupom } from '../domain/cupons/Cupom.js';
 import type { MovimentoEstoque } from '../domain/estoque/MovimentoEstoque.js';
 import type { Pedido } from '../domain/pedidos/Pedido.js';
@@ -7,6 +9,8 @@ import type { Produto } from '../domain/produtos/Produto.js';
 import type { Banner, Secao } from '../domain/vitrine/Vitrine.js';
 import { JsonAvaliacaoRepository } from './repositories/JsonAvaliacaoRepository.js';
 import { JsonCupomRepository } from './repositories/JsonCupomRepository.js';
+import { JsonClienteRepository } from './repositories/JsonClienteRepository.js';
+import { JsonEtapaClienteRepository } from './repositories/JsonEtapaClienteRepository.js';
 import { JsonMovimentoEstoqueRepository } from './repositories/JsonMovimentoEstoqueRepository.js';
 import { JsonPedidoRepository } from './repositories/JsonPedidoRepository.js';
 import { JsonProdutoRepository } from './repositories/JsonProdutoRepository.js';
@@ -27,6 +31,10 @@ export interface Deps {
   pedidos: JsonPedidoRepository;
   cupons: JsonCupomRepository;
   avaliacoes: JsonAvaliacaoRepository;
+  /** Cadastro manual. A ficha do CRM continua vindo dos pedidos. */
+  clientes: JsonClienteRepository;
+  /** Onde o quadro do CRM guarda o card que alguém arrastou. */
+  etapasDeClientes: JsonEtapaClienteRepository;
   banners: JsonBannerRepository;
   secoes: JsonSecaoRepository;
   contadores: Contadores;
@@ -48,6 +56,8 @@ export function criarDeps(dataDir: string, tipo: TipoDeArmazenamento = 'arquivo'
     pedidos: new JsonPedidoRepository(colecao<Pedido>('pedidos')),
     cupons: new JsonCupomRepository(colecao<Cupom>('cupons')),
     avaliacoes: new JsonAvaliacaoRepository(colecao<Avaliacao>('avaliacoes')),
+    clientes: new JsonClienteRepository(colecao<ClienteCadastrado>('clientes')),
+    etapasDeClientes: new JsonEtapaClienteRepository(colecao<EtapaEscolhida>('etapas-clientes')),
     banners: new JsonBannerRepository(colecao<Banner>('banners')),
     secoes: new JsonSecaoRepository(colecao<Secao>('secoes')),
     contadores: new Contadores(colecao('contadores')),

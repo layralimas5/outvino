@@ -21,7 +21,7 @@ export function Configuracao() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-xl font-semibold text-stone-900">Configuração</h1>
+        <h1 className="text-xl font-semibold text-stone-900">Configurações</h1>
         <p className="text-sm text-stone-500">
           Como o servidor está rodando agora. Para mudar, altere a variável de ambiente e reinicie
           a API.

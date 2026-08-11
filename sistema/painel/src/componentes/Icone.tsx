@@ -13,6 +13,7 @@ export type NomeDeIcone =
   | 'avaliacoes'
   | 'financeiro'
   | 'crm'
+  | 'clientes'
   | 'api'
   | 'configuracao'
   | 'sino'
@@ -29,6 +30,13 @@ const CAMINHOS: Record<NomeDeIcone, string[]> = {
   avaliacoes: ['M12 4.5l2.2 4.5 5 .7-3.6 3.5.9 4.9-4.5-2.4-4.5 2.4.9-4.9L4.8 9.7l5-.7Z'],
   financeiro: ['M4 18V7', 'M9 18V4', 'M14 18v-8', 'M19 18v-4', 'M3 21h18'],
   crm: ['M16 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-4A3.5 3.5 0 0 0 5 18.5V20', 'M10.5 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z', 'M19 20v-1.5a3.5 3.5 0 0 0-2.5-3.35', 'M15 4.2a3.5 3.5 0 0 1 0 6.6'],
+  clientes: [
+    'M4 5h16v14H4z',
+    'M9.6 11.6a1.9 1.9 0 1 0 0-3.8 1.9 1.9 0 0 0 0 3.8Z',
+    'M6.4 16.2a3.3 3.3 0 0 1 6.4 0',
+    'M15.5 10h2.5',
+    'M15.5 14h2.5',
+  ],
   api: ['M8 6 3 12l5 6', 'M16 6l5 6-5 6', 'M13.5 4.5l-3 15'],
   configuracao: [
     'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z',

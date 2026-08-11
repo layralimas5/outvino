@@ -4,7 +4,9 @@ import { Layout } from './componentes/Layout';
 import { ProvedorDeSessao, useSessao } from './hooks/useSessao';
 import { Api } from './paginas/Api';
 import { Avaliacoes } from './paginas/Avaliacoes';
+import { Clientes } from './paginas/Clientes';
 import { Configuracao } from './paginas/Configuracao';
+import { Conta } from './paginas/Conta';
 import { Crm } from './paginas/Crm';
 import { Cupons } from './paginas/Cupons';
 import { Estoque } from './paginas/Estoque';
@@ -46,7 +48,9 @@ function Portao() {
           <Route path="cupons" element={<Cupons />} />
           <Route path="avaliacoes" element={<Avaliacoes />} />
           <Route path="financeiro" element={<Financeiro />} />
+          <Route path="clientes" element={<Clientes />} />
           <Route path="crm" element={<Crm />} />
+          <Route path="conta" element={<Conta />} />
           {/* `integracao`, e não `api`: o prefixo `/api` é do servidor. */}
           <Route path="integracao" element={<Api />} />
           <Route path="configuracao" element={<Configuracao />} />

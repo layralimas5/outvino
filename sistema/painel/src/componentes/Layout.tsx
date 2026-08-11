@@ -43,6 +43,7 @@ const GRUPOS: Array<{ titulo: string; links: ItemDeMenu[] }> = [
     titulo: 'Gestão',
     links: [
       { para: '/financeiro', rotulo: 'Financeiro', icone: 'financeiro' },
+      { para: '/clientes', rotulo: 'Clientes', icone: 'clientes' },
       { para: '/crm', rotulo: 'CRM', icone: 'crm' },
     ],
   },
@@ -55,7 +56,7 @@ const GRUPOS: Array<{ titulo: string; links: ItemDeMenu[] }> = [
        * antes do painel — nos dois casos a tela nunca abriria.
        */
       { para: '/integracao', rotulo: 'API', icone: 'api' },
-      { para: '/configuracao', rotulo: 'Configuração', icone: 'configuracao' },
+      { para: '/configuracao', rotulo: 'Configurações', icone: 'configuracao' },
     ],
   },
 ];
@@ -191,6 +192,9 @@ function useFechaFora<T extends HTMLElement>(aberto: boolean, fechar: () => void
 const BOTAO_DE_TOPO =
   'relative inline-flex size-9 items-center justify-center rounded-full transition-colors';
 
+const ITEM_DO_MENU =
+  'flex items-center gap-2 rounded-md px-2.5 py-2 text-sm text-stone-700 transition-colors hover:bg-stone-100';
+
 /**
  * O sino não inventa notificação: ele lista o que está de fato parado
  * esperando alguém — pedido do site sem confirmar, avaliação sem moderar e
@@ -318,34 +322,53 @@ function Usuario({ escuro = false }: { escuro?: boolean }) {
       </button>
 
       {aberto && (
-        <div className="absolute right-0 z-20 mt-1 w-56 rounded-lg border border-stone-200 bg-white p-1.5 text-left shadow-lg">
-          <div className="px-2.5 py-2">
-            <p className="text-xs font-medium text-stone-500">Operando</p>
-            <p className="mt-0.5 truncate text-sm font-medium text-stone-800">{nome}</p>
+        <div className="absolute right-0 z-20 mt-1 w-60 rounded-lg border border-stone-200 bg-white p-1.5 text-left shadow-lg">
+          <div className="flex items-center gap-2.5 px-2.5 py-2">
+            <span className="grid size-8 shrink-0 place-items-center rounded-full bg-vinho-600 text-xs font-semibold text-white">
+              {inicial}
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-stone-900">{nome}</p>
+              <p className="truncate text-xs text-stone-500">
+                {autenticacaoLigada ? 'Sessão com senha' : 'Painel sem login'}
+              </p>
+            </div>
           </div>
 
           <div className="border-t border-stone-100 pt-1.5">
-            <Link
-              to="/configuracao"
-              onClick={fechar}
-              className="flex items-center gap-2 rounded-md px-2.5 py-2 text-sm text-stone-700 transition-colors hover:bg-stone-100"
-            >
-              <Icone nome="configuracao" />
-              Configuração
+            <Link to="/conta" onClick={fechar} className={ITEM_DO_MENU}>
+              <Icone nome="usuario" />
+              Minha conta
             </Link>
 
-            {/* Sem senha na API não há sessão pra encerrar: sair devolveria à
-                mesma tela, porque o painel entra sozinho de novo. */}
-            {autenticacaoLigada && (
+            <Link to="/configuracao" onClick={fechar} className={ITEM_DO_MENU}>
+              <Icone nome="configuracao" />
+              Configurações
+            </Link>
+
+            {autenticacaoLigada ? (
               <Botao
                 variante="fantasma"
                 onClick={aoSair}
                 disabled={saindo}
-                className="w-full justify-start px-2.5"
+                className="w-full justify-start px-2.5 py-2"
               >
                 <Icone nome="sair" />
                 {saindo ? 'Saindo…' : 'Sair'}
               </Botao>
+            ) : (
+              /* Sem senha na API não existe sessão pra encerrar: o painel
+                 entraria sozinho de novo. Aparece desligado, com o motivo, em
+                 vez de sumir — some, e a pergunta vira "cadê o sair?". */
+              <div className="px-2.5 pt-1 pb-1.5">
+                <span className="flex items-center gap-1.5 text-sm text-stone-400">
+                  <Icone nome="sair" />
+                  Sair
+                </span>
+                <span className="mt-0.5 block text-xs text-stone-400">
+                  Nada pra encerrar: o painel está aberto sem senha.
+                </span>
+              </div>
             )}
           </div>
         </div>

@@ -6,12 +6,32 @@ interface EstadoDaSessao extends Sessao {
   carregando: boolean;
   entrar: (nome: string, senha: string) => Promise<void>;
   sair: () => Promise<void>;
+  /**
+   * Troca o nome de quem está no balcão **enquanto a API roda sem senha**.
+   *
+   * Só vale nesse modo: com autenticação ligada quem assina é a sessão do
+   * cookie, e a API ignora o nome que o front mandar. Nome vazio volta pro
+   * `Sistema`, que é o autor padrão dela.
+   */
+  renomear: (nome: string) => void;
 }
 
 const Contexto = createContext<EstadoDaSessao | null>(null);
 
 /** Quem assina o histórico quando a API roda sem senha. Espelha o padrão dela. */
 const OPERADOR_PADRAO: Operador = { id: 'sistema', nome: 'Sistema' };
+
+/** Mesma regra de slug da API, pro id mostrado bater com o que ela grava. */
+function idDoNome(nome: string): string {
+  const id = nome
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+
+  return id || 'sistema';
+}
 
 /**
  * Fonte única de "quem está logado".
@@ -75,6 +95,20 @@ export function ProvedorDeSessao({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  const renomear = useCallback((nome: string) => {
+    const limpo = nome.trim();
+    definirOperador(limpo);
+
+    // O id daqui é só rótulo: quem monta o autor de verdade é a API, a partir
+    // do cabeçalho. Espelhar o formato dela mantém a tela coerente com o que
+    // vai aparecer no histórico.
+    const operador: Operador = limpo
+      ? { id: idDoNome(limpo), nome: limpo }
+      : OPERADOR_PADRAO;
+
+    setSessao((atual) => (atual ? { ...atual, operador } : atual));
+  }, []);
+
   const sair = useCallback(async () => {
     try {
       await api.remover('/sessao');
@@ -97,6 +131,7 @@ export function ProvedorDeSessao({ children }: { children: ReactNode }) {
         carregando,
         entrar,
         sair,
+        renomear,
       }}
     >
       {children}

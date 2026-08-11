@@ -133,10 +133,28 @@ respondem 503 de propósito e o painel sobe fechado.
 - O painel tem login (senha única + sessão em cookie). Falta ainda usuário por
   pessoa e permissão por papel — hoje quem entra faz tudo. O nome informado no
   login é o que assina o histórico de estoque e pedido.
-- O painel tem onze telas, agrupadas na barra lateral vinho por momento de uso:
+- O painel tem treze telas, agrupadas na barra lateral vinho por momento de uso:
   **Operação** (Resumo, Pedidos, Produtos, Estoque), **Loja** (Vitrine, Cupons,
-  Avaliações), **Gestão** (Financeiro, CRM) e **Sistema** (API, Configuração).
-  Na barra de topo ficam o sino e o botão de conta.
+  Avaliações), **Gestão** (Financeiro, Clientes, CRM) e **Sistema** (API,
+  Configurações). Fora do menu, em `/conta`, fica "Minha conta". Na barra de
+  topo ficam o sino e o botão de conta.
+- **Clientes** e **CRM** são a mesma carteira em duas perguntas diferentes:
+  a lista compara número entre pessoas (quem gastou mais, quem sumiu, quem
+  levou o quê, com filtro por etapa), o quadro mostra o funil e deixa mover.
+  Mesma rota de API nas duas. O botão **Cadastrar cliente** e a ficha completa
+  vivem na lista; na linha de quem veio só de pedido o botão é "Cadastrar" e o
+  formulário abre com nome, telefone e e-mail já preenchidos. Endereço é tudo
+  ou nada (rua, número, bairro, cidade e UF) — meio endereço não entrega vinho
+  em lugar nenhum, e a validação é a mesma nos dois lados.
+- O botão de conta abre um menu com o nome de quem está operando, **Minha
+  conta**, **Configurações** e **Sair**. Sem `SENHA_PAINEL` não existe sessão
+  pra encerrar: o "Sair" aparece desligado com o motivo em vez de sumir — item
+  ausente vira a pergunta "cadê o sair?", item que não faz nada é pior ainda.
+- **Minha conta** (`/conta`) é onde se troca o nome que assina o histórico
+  **enquanto o painel roda sem senha**: o nome vai no cabeçalho `x-operador`,
+  fica no navegador e substitui o `Sistema` nos movimentos de estoque e no
+  histórico de pedido. Com autenticação ligada o campo some, porque aí quem
+  assina é a sessão do cookie e a API ignora esse cabeçalho de propósito.
 - O sino não inventa notificação: lista o que está parado esperando alguém
   (pedido do site sem confirmar, avaliação sem moderar, produto no estoque
   mínimo), tudo vindo de `GET /api/relatorios/resumo` numa chamada só.
@@ -145,9 +163,29 @@ respondem 503 de propósito e o painel sobe fechado.
   deixa à vista: o custo é o **cadastrado hoje** (o pedido não guarda custo
   histórico), e rascunho não é receita — aparece como pipeline, à parte. Venda
   de produto sem custo cadastrado é contada e avisada, senão a margem mente.
-- **CRM** (`GET /api/clientes`) é montado a partir dos pedidos, agrupando por
-  telefone: não existe cadastro de cliente no sistema, e criar um agora seria
-  inventar dado. Quem só tem rascunho aparece marcado como lead, não cliente.
+- **CRM** (`GET /api/clientes`) monta a ficha de duas fontes que se completam.
+  O **histórico** (quanto gastou, quando comprou, o que levou) é sempre
+  calculado dos pedidos, nunca digitado — por isso não mente. O **cadastro**
+  (`POST/PATCH/DELETE /api/clientes/:telefone`, coleção `clientes`) traz o que
+  nenhum pedido conta: CPF com dígito conferido, aniversário, endereço de
+  sempre, preferências, observações. A chave dos dois lados é o telefone
+  normalizado com DDI, e é o que faz cadastro e histórico caírem na mesma ficha
+  em vez de virarem duas pessoas — por isso o telefone **não é editável** na
+  ficha. Quem tem cadastro e nenhum pedido aparece com os números zerados
+  (a loja conhece gente antes da primeira venda, e isso não é ter comprado);
+  quem só tem rascunho segue marcado como lead. Apagar a ficha apaga só o que
+  foi digitado: o histórico de pedidos continua de pé. No resumo, `total` conta
+  quem comprou e `cadastrados` conta as fichas.
+  A tela é um **quadro de cinco colunas** (Lead, Em conversa, Cliente,
+  Recorrente, Sumido) com card arrastável. Quatro colunas saem do histórico
+  sozinhas; "Em conversa" é a única que nenhum dado prova e só existe por
+  movimento manual. Arrastar grava a escolha em `etapas-clientes` guardando
+  junto a etapa que os pedidos indicavam na hora — quando o fato muda (a pessoa
+  comprou, ou sumiu), a escolha **caduca** e o card volta a seguir o histórico,
+  em vez de ficar parado numa coluna mentindo. `PATCH
+  /api/clientes/:telefone/etapa` move, `DELETE` volta ao automático. O arrasto
+  não serve teclado nem celular, então cada card tem também um seletor de
+  coluna — é o mesmo movimento pelo caminho que funciona em todo lugar.
 - **API** e **Configuração** são telas de leitura. A de Configuração mostra o
   que está valendo no servidor a partir de `GET /api/diagnostico`, que responde
   apenas **se** cada variável está definida — nenhuma senha, chave ou token
