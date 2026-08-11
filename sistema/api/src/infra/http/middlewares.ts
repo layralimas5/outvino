@@ -52,7 +52,8 @@ export function exigirJson(req: Request): void {
  */
 export const exigirSessao: RequestHandler = (req, _res, next) => {
   if (!env.autenticacaoLigada) {
-    if (env.producao) {
+    // `PAINEL_ABERTO=true` é a decisão consciente de abrir: passa direto.
+    if (env.producao && !env.painelAberto) {
       throw new ConfiguracaoPendente(
         'Painel sem senha configurada. Defina SENHA_PAINEL nas variáveis de ambiente pra liberar o acesso.',
       );

@@ -57,6 +57,7 @@ export function criarServidor(deps: Deps): Express {
       dataDir: env.armazenamento === 'arquivo' ? env.dataDir : null,
       node: process.version,
       autenticacaoLigada: env.autenticacaoLigada,
+      painelAberto: env.painelAberto,
       sessaoEmHoras: env.sessaoEmHoras,
       segredoDeSessaoProprio: Boolean(env.segredoDaSessao),
       origensPermitidas: env.origensPermitidas,

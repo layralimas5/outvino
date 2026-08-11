@@ -37,6 +37,17 @@ const schema = z.object({
    */
   SENHA_PAINEL: z.string().default(''),
   /**
+   * Deixa o painel aberto **em produção**, sem login.
+   *
+   * Existe porque esquecer a senha e escolher abrir o sistema são coisas
+   * diferentes: sem esta variável, produção sem `SENHA_PAINEL` continua
+   * respondendo 503, que é o certo pro caso do esquecimento. Ligar aqui é uma
+   * decisão consciente — em apresentação e demonstração — e o preço dela é
+   * real: quem alcançar a URL lê pedido, cliente e faturamento, e mexe no
+   * estoque. Só vale `true`, e só quando não existe senha configurada.
+   */
+  PAINEL_ABERTO: z.string().default(''),
+  /**
    * Segredo que assina o cookie de sessão. Opcional: sem ele, a chave é
    * derivada da própria senha — o efeito colateral é bom, trocar a senha
    * invalida as sessões abertas.
@@ -75,16 +86,35 @@ if (senhaDoPainel && senhaDoPainel.length < MINIMO_DA_SENHA) {
 const autenticacaoLigada = senhaDoPainel.length > 0;
 
 /**
+ * A senha manda sobre a abertura: existindo senha, o login fica de pé mesmo com
+ * `PAINEL_ABERTO=true`. É o que impede uma variável esquecida de derrubar em
+ * silêncio uma autenticação que alguém configurou de propósito.
+ */
+const painelAberto = !autenticacaoLigada && bruto.PAINEL_ABERTO.trim() === 'true';
+
+if (autenticacaoLigada && bruto.PAINEL_ABERTO.trim() === 'true') {
+  console.warn(
+    '\n  PAINEL_ABERTO ignorado: existe SENHA_PAINEL configurada, e o login continua valendo.\n' +
+      '  Pra abrir o painel, remova a senha das variáveis de ambiente.\n',
+  );
+}
+
+/**
  * Sem `SENHA_PAINEL`, quem alcança a URL lê pedido, cliente e faturamento. Em
  * desenvolvimento isso é conveniência; em produção as rotas de gestão respondem
  * 503 até a senha existir — o mesmo critério da integração do site: faltar é
- * melhor do que ficar aberto.
+ * melhor do que ficar aberto. `PAINEL_ABERTO=true` é a exceção declarada,
+ * pra demonstração, e o log grita justamente porque não deve virar rotina.
  */
 if (!autenticacaoLigada) {
   console.warn(
     producao
-      ? '\n  PAINEL FECHADO: falta SENHA_PAINEL.\n' +
-          '  As rotas de gestão respondem 503 até a variável ser configurada.\n'
+      ? painelAberto
+        ? '\n  PAINEL ABERTO NA INTERNET (PAINEL_ABERTO=true, sem SENHA_PAINEL).\n' +
+            '  Qualquer um com a URL lê pedido, cliente e faturamento, e mexe no estoque.\n' +
+            '  Isso é modo de demonstração: reponha SENHA_PAINEL quando terminar.\n'
+        : '\n  PAINEL FECHADO: falta SENHA_PAINEL.\n' +
+            '  As rotas de gestão respondem 503 até a variável ser configurada.\n'
       : '\n  Painel sem autenticação (SENHA_PAINEL vazia). Vale só em desenvolvimento.\n',
   );
 }
@@ -107,6 +137,8 @@ export const env = {
     .filter(Boolean),
   chaveSite: bruto.CHAVE_SITE,
   autenticacaoLigada,
+  /** Produção aberta de propósito, sem login. Só pra demonstração. */
+  painelAberto,
   senhaDoPainel,
   segredoDaSessao: bruto.SEGREDO_SESSAO.trim(),
   sessaoEmHoras: bruto.SESSAO_HORAS,

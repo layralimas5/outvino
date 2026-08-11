@@ -337,6 +337,8 @@ export interface Diagnostico {
   dataDir: string | null;
   node: string;
   autenticacaoLigada: boolean;
+  /** Produção sem login de propósito (`PAINEL_ABERTO=true`). Só demonstração. */
+  painelAberto: boolean;
   sessaoEmHoras: number;
   segredoDeSessaoProprio: boolean;
   origensPermitidas: string[];

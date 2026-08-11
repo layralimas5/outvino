@@ -31,16 +31,29 @@ export function Configuracao() {
       <Conteudo estado={estado}>
         {(dados) => (
           <div className="space-y-6">
-            {!dados.autenticacaoLigada && (
-              <Cartao className="border-amber-200 bg-amber-50 p-4">
-                <p className="text-sm text-amber-900">
-                  <strong>O painel está sem login.</strong> Vale em desenvolvimento, mas antes de
-                  publicar é obrigatório definir{' '}
-                  <code className="font-mono text-xs">SENHA_PAINEL</code> (mínimo 12 caracteres) nas
-                  variáveis da Netlify. Em produção sem ela, as rotas de gestão respondem 503 de
-                  propósito e o sistema não abre.
+            {dados.painelAberto ? (
+              <Cartao className="border-red-200 bg-red-50 p-4">
+                <p className="text-sm text-red-900">
+                  <strong>Este painel está aberto na internet.</strong> Rodando em produção sem
+                  login, por <code className="font-mono text-xs">PAINEL_ABERTO=true</code>: quem
+                  tiver o endereço lê pedidos, dados de cliente e faturamento, e mexe no estoque. É
+                  modo de demonstração — reponha{' '}
+                  <code className="font-mono text-xs">SENHA_PAINEL</code> (mínimo 12 caracteres) e
+                  apague essa variável quando terminar.
                 </p>
               </Cartao>
+            ) : (
+              !dados.autenticacaoLigada && (
+                <Cartao className="border-amber-200 bg-amber-50 p-4">
+                  <p className="text-sm text-amber-900">
+                    <strong>O painel está sem login.</strong> Vale em desenvolvimento, mas antes de
+                    publicar é obrigatório definir{' '}
+                    <code className="font-mono text-xs">SENHA_PAINEL</code> (mínimo 12 caracteres)
+                    nas variáveis da Netlify. Em produção sem ela, as rotas de gestão respondem 503
+                    de propósito e o sistema não abre.
+                  </p>
+                </Cartao>
+              )
             )}
 
             <Cartao>
@@ -101,9 +114,19 @@ export function Configuracao() {
                     <Badge classe="bg-emerald-100 text-emerald-900 ring-emerald-200">
                       com senha
                     </Badge>
+                  ) : dados.painelAberto ? (
+                    <Badge classe="bg-red-100 text-red-900 ring-red-200">aberto</Badge>
                   ) : (
                     <Badge classe="bg-amber-100 text-amber-900 ring-amber-200">sem senha</Badge>
                   )}
+                </Linha>
+
+                <Linha
+                  rotulo="Painel aberto sem login"
+                  variavel="PAINEL_ABERTO"
+                  dica="Só `true` abre o sistema em produção, e só quando não existe senha. Serve pra demonstração — em operação normal, fica fora."
+                >
+                  <Sim valor={dados.painelAberto} />
                 </Linha>
 
                 <Linha rotulo="Duração da sessão" variavel="SESSAO_HORAS">

@@ -65,7 +65,7 @@ export function rotasDeSessao(): Router {
    * front: é daqui que ele decide entre a tela de login e a de nome livre.
    */
   rotas.get('/', (req, res) => {
-    const configuracaoPendente = env.producao && !env.autenticacaoLigada;
+    const configuracaoPendente = env.producao && !env.autenticacaoLigada && !env.painelAberto;
 
     /**
      * `req.operador` já resolve os dois modos: com senha vem do cookie, sem
