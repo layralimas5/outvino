@@ -1,9 +1,9 @@
-import { useCallback, type ReactNode } from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
 import { Conteudo } from '../componentes/Estado';
-import { Badge, Cartao } from '../componentes/ui';
+import { Badge, Botao, Cartao } from '../componentes/ui';
 import { useApi } from '../hooks/useApi';
-import { api } from '../lib/api';
-import type { Diagnostico } from '../tipos';
+import { api, ErroDaApi } from '../lib/api';
+import type { Diagnostico, ResumoDoSeed } from '../tipos';
 
 /**
  * Configuração do servidor, em modo leitura.
@@ -178,6 +178,8 @@ export function Configuracao() {
               </dl>
             </Cartao>
 
+            <DadosDeExemplo />
+
             <p className="text-xs text-stone-500">
               Nenhuma senha, chave ou token passa por esta tela: a API responde só se a variável
               está definida, nunca o valor dela.
@@ -186,6 +188,80 @@ export function Configuracao() {
         )}
       </Conteudo>
     </div>
+  );
+}
+
+/**
+ * Popular o sistema com catálogo, vitrine e pedidos de amostra.
+ *
+ * Em desenvolvimento isso é `npm run seed`. Em produção não existe disco pra
+ * rodar script contra — os dados vivem no Netlify Blobs, e um projeto novo sobe
+ * vazio. Daí o botão: é o mesmo seed, disparado de dentro do painel.
+ */
+function DadosDeExemplo() {
+  const [resultado, setResultado] = useState<ResumoDoSeed | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
+  const [semeando, setSemeando] = useState(false);
+
+  async function semear(forcar: boolean) {
+    if (
+      forcar &&
+      !confirm(
+        'Já existe catálogo cadastrado. Isso vai cadastrar os exemplos por cima, sem apagar o que está lá. Continuar?',
+      )
+    ) {
+      return;
+    }
+
+    setSemeando(true);
+    setErro(null);
+
+    try {
+      setResultado(await api.post<ResumoDoSeed>(`/exemplos${forcar ? '?forcar=true' : ''}`));
+    } catch (causa) {
+      setErro(causa instanceof ErroDaApi ? causa.message : 'Não consegui popular o sistema.');
+    } finally {
+      setSemeando(false);
+    }
+  }
+
+  return (
+    <Cartao>
+      <Titulo>Dados de exemplo</Titulo>
+      <div className="px-4 py-3">
+        <p className="max-w-2xl text-sm text-stone-600">
+          Cadastra catálogo, banners, seções, cupom, avaliações e alguns pedidos fictícios — é o que
+          faz o sistema não abrir vazio numa demonstração. Não apaga nada: havendo catálogo, o botão
+          recusa e avisa. Quando o catálogo real da loja entrar, apague estes exemplos pelo painel.
+        </p>
+
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <Botao variante="secundario" onClick={() => void semear(false)} disabled={semeando}>
+            {semeando ? 'Cadastrando…' : 'Popular com exemplos'}
+          </Botao>
+
+          {erro && (
+            <Botao variante="perigo" onClick={() => void semear(true)} disabled={semeando}>
+              Cadastrar mesmo assim
+            </Botao>
+          )}
+        </div>
+
+        {erro && (
+          <p role="alert" className="mt-2 text-sm text-red-700">
+            {erro}
+          </p>
+        )}
+
+        {resultado && (
+          <p role="status" className="mt-2 text-sm text-emerald-700">
+            Pronto: {resultado.produtos} produtos, {resultado.banners} banners, {resultado.secoes}{' '}
+            seções, {resultado.cupons} cupom, {resultado.avaliacoes} avaliações e{' '}
+            {resultado.pedidos} pedidos. Recarregue as telas pra ver.
+          </p>
+        )}
+      </div>
+    </Cartao>
   );
 }
 

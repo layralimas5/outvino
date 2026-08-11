@@ -349,6 +349,16 @@ export interface Diagnostico {
   temToken: boolean;
 }
 
+/** O que o seed cadastrou. Devolvido por `POST /api/exemplos`. */
+export interface ResumoDoSeed {
+  produtos: number;
+  banners: number;
+  secoes: number;
+  cupons: number;
+  avaliacoes: number;
+  pedidos: number;
+}
+
 export interface MapaDaApi {
   sistema: string;
   recursos: Record<string, string>;

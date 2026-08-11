@@ -8,6 +8,7 @@ import { exigirSessao, identificarOperador, naoEncontrado, tratarErros } from '.
 import { rotasDeAvaliacoes } from './rotas/avaliacoes.js';
 import { rotasDeClientes } from './rotas/clientes.js';
 import { rotasDeCupons } from './rotas/cupons.js';
+import { rotasDeExemplos } from './rotas/exemplos.js';
 import { rotasDeEstoque } from './rotas/estoque.js';
 import { rotasDePedidos } from './rotas/pedidos.js';
 import { rotasDeProdutos } from './rotas/produtos.js';
@@ -85,6 +86,7 @@ export function criarServidor(deps: Deps): Express {
         avaliacoes: '/api/avaliacoes',
         vitrine: '/api/vitrine/banners · /api/vitrine/secoes',
         catalogoDoSite: '/api/publico/catalogo',
+        dadosDeExemplo: 'POST /api/exemplos',
       },
     });
   });
@@ -98,6 +100,7 @@ export function criarServidor(deps: Deps): Express {
   app.use('/api/avaliacoes', exigirSessao, rotasDeAvaliacoes(deps));
   app.use('/api/vitrine', exigirSessao, rotasDeVitrine(deps));
   app.use('/api/relatorios', exigirSessao, rotasDeRelatorios(deps));
+  app.use('/api/exemplos', exigirSessao, rotasDeExemplos(deps));
 
   // Público não passa pelo guarda: quem chama é o carrinho do site, de fora, e
   // a barreira lá é a `CHAVE_SITE`.
