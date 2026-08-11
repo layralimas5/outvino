@@ -37,3 +37,36 @@
     font-variant-numeric: tabular-nums;
   }
 }
+
+/**
+ * O pulsar de hover dos cartões.
+ *
+ * Respira devagar enquanto o mouse está em cima e para quando ele sai. A escala
+ * é minúscula de propósito: é pra dar sinal de vida, não pra empurrar texto de
+ * lugar — o mesmo gesto tem que servir tanto no card do CRM quanto num cartão
+ * que ocupa a largura da tela.
+ */
+@keyframes pulsar-cartao {
+  50% {
+    transform: scale(1.005);
+    box-shadow: 0 8px 20px -6px rgb(0 0 0 / 0.16);
+  }
+}
+
+@utility pulsa {
+  transition:
+    box-shadow 200ms ease,
+    transform 200ms ease;
+
+  &:hover {
+    animation: pulsar-cartao 1.8s ease-in-out infinite;
+  }
+
+  /* Quem pediu menos movimento continua tendo o retorno do hover, parado. */
+  @media (prefers-reduced-motion: reduce) {
+    &:hover {
+      animation: none;
+      box-shadow: 0 8px 20px -6px rgb(0 0 0 / 0.16);
+    }
+  }
+}

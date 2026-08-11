@@ -96,7 +96,9 @@ export function Caixa({ rotulo, marcado, aoMudar }: CaixaProps) {
 
 export function Cartao({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`rounded-lg border border-stone-200 bg-white ${className}`}>{children}</div>
+    <div className={`pulsa rounded-lg border border-stone-200 bg-white ${className}`}>
+      {children}
+    </div>
   );
 }
 
