@@ -22,6 +22,18 @@ const app = criarServidor(criarDeps('', 'blobs'));
 /** serverless-http fala o dialeto de evento da AWS; a ponte fica contida aqui. */
 const executar = serverless(app, { provider: 'aws' });
 
+/**
+ * Status que **não podem** ter corpo.
+ *
+ * O `serverless-http` devolve `body: ''` mesmo num 204, e o construtor de
+ * `Response` recusa qualquer corpo nesses status — nem string vazia passa. Sem
+ * este filtro a função estourava TypeError **depois** de o Express já ter feito
+ * o trabalho: o produto era excluído, o cupom apagado, a sessão encerrada, e
+ * mesmo assim o painel recebia 502. Erro que só aparece em produção, porque em
+ * desenvolvimento o Express responde direto, sem passar por esta ponte.
+ */
+const SEM_CORPO = new Set([204, 205, 304]);
+
 interface RespostaDaPonte {
   statusCode: number;
   headers?: Record<string, string | number | boolean>;
@@ -55,9 +67,11 @@ export default async function api(requisicao: Request): Promise<Response> {
     for (const valor of valores) cabecalhos.append(nome, String(valor));
   }
 
-  const corpo = resposta.isBase64Encoded
-    ? Buffer.from(resposta.body ?? '', 'base64')
-    : (resposta.body ?? null);
+  const corpo = SEM_CORPO.has(resposta.statusCode)
+    ? null
+    : resposta.isBase64Encoded
+      ? Buffer.from(resposta.body ?? '', 'base64')
+      : (resposta.body ?? null);
 
   return new Response(corpo, { status: resposta.statusCode, headers: cabecalhos });
 }
