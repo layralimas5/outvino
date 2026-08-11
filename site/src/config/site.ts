@@ -78,7 +78,7 @@ export const RODAPE_LINKS = [...NAV_LINKS, { href: '/sobre/', label: 'Sobre nós
  */
 export const SISTEMA_URL =
   import.meta.env.PUBLIC_SISTEMA_URL ??
-  (import.meta.env.DEV ? 'http://localhost:5175/' : 'https://outvino-sistema.netlify.app/');
+  (import.meta.env.DEV ? 'http://localhost:5173/' : 'https://outvino-sistema.netlify.app/');
 
 /** Atalhos em ícone, à direita do menu. */
 export const NAV_ACOES = [
