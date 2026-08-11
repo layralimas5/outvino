@@ -69,6 +69,14 @@ respondem 503 de propósito e o painel sobe fechado.
     painel mostra o aviso do que configurar — sistema fechado é melhor do que
     back-office aberto na internet. Ou seja, **antes de publicar o sistema a
     senha precisa existir nas variáveis da Netlify.**
+- `PAINEL_ABERTO=true` é a exceção declarada a essa última regra: abre o painel
+  em produção sem login, e **só** funciona com `SENHA_PAINEL` vazia (senha
+  configurada sempre vence, pra variável esquecida não derrubar autenticação em
+  silêncio). Existe por causa da apresentação da Outvino, que é sem usuário e
+  senha. Enquanto está ligada, qualquer um com o endereço lê pedido, cliente e
+  faturamento e mexe no estoque — por isso ela grita no log de inicialização e
+  pinta um aviso vermelho na tela de Configurações. **Terminada a demonstração:
+  apagar a variável e repor `SENHA_PAINEL`.**
 - Nada de avaliação/nota inventada em produto. Só entra o que for real.
 - Texto legal nunca inventa dado do cliente. O bloco de identificação do
   fornecedor nas páginas institucionais só aparece quando `SITE.empresa` estiver
